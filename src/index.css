@@ -89,7 +89,7 @@ All colors MUST be HSL.
     @apply relative overflow-hidden bg-card border border-border rounded-lg p-6;
     @apply transition-all duration-300 ease-out;
     @apply hover:border-primary/40 hover:shadow-[0_8px_40px_-4px_hsl(var(--primary)/0.2)];
-    @apply cursor-pointer group;
+    @apply cursor-pointer;
     background: var(--gradient-card);
   }
 

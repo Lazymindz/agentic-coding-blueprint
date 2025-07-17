@@ -32,7 +32,7 @@ export const SlideCard = ({ slideNumber, title, description, content, tags, rout
 
   return (
     <Card 
-      className="slide-card group cursor-pointer" 
+      className="slide-card group" 
       onClick={handleCardClick}
     >
       <CardHeader>
