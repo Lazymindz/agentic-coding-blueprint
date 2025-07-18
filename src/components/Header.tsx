@@ -37,7 +37,7 @@ export const Header = () => {
             asChild
           >
             <a
-              href="https://github.com/humanlayer/12-factor-agents"
+              href="https://github.com/Lazymindz/agentic-coding-blueprint/blob/main/slides/slides.md"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-2"

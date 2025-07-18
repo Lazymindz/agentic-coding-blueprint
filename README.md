@@ -15,8 +15,8 @@ This educational presentation covers 11 key topics for developers starting their
 5. **The #1 Pitfall: How Context Fails** - Common context window issues and solutions
 6. **Best Practices: Context Engineering** - Techniques for effective context management
 7. **Architectural Patterns for AI Systems** - Workflows vs agents, common patterns
-8. **12-Factor Agent: Production Principles (Part 1)** - First 6 principles for robust agents
-9. **12-Factor Agent: Production Principles (Part 2)** - Remaining 6 principles
+8. **12-Factor-Agents: Production Principles (Part 1)** - First 6 principles for robust agents
+9. **12-Factor-Agents: Production Principles (Part 2)** - Remaining 6 principles
 10. **Key Takeaways & The Golden Rule** - Essential do's and don'ts
 11. **Your Journey Starts Here** - Additional resources and next steps
 

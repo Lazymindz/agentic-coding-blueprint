@@ -55,7 +55,7 @@ const Index = () => {
                   <div>
                     <h4 className="font-medium mb-2">Ready for Production?</h4>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Jump to slides 7-9 for architectural patterns and the 12-factor principles.
+                      Jump to slides 7-9 for architectural patterns and the 12-factor-agents principles.
                     </p>
                   </div>
                 </div>
