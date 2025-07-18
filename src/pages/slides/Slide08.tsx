@@ -76,7 +76,7 @@ const Slide08 = () => {
           <Card className="border-primary/20">
             <CardHeader className="text-center pb-8">
               <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
-                <span className="gradient-text">The 12-Factor Agent</span>
+                <span className="gradient-text">The 12-Factor-Agents</span>
               </CardTitle>
               <p className="text-xl text-muted-foreground">
                 First six principles for building robust, production-ready AI agents
@@ -86,7 +86,7 @@ const Slide08 = () => {
             <CardContent className="space-y-8">
               <div className="text-center mb-8 p-6 bg-card/50 border border-primary/20 rounded-lg">
                 <p className="text-lg">
-                  Inspired by the <span className="font-semibold text-primary">12-Factor App</span>, these principles apply within the patterns above to create robust agents.
+                  These principles apply within the patterns above to create robust agents.
                 </p>
               </div>
 
@@ -114,28 +114,7 @@ const Slide08 = () => {
                 ))}
               </div>
 
-              {/* Visual representation of 12-Factor progression */}
-              <div className="bg-gradient-card border border-primary/20 rounded-lg p-8">
-                <h3 className="text-xl font-semibold text-center mb-6 gradient-text">
-                  Production-Ready Agent Principles
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
-                  {[1,2,3,4,5,6].map((num) => (
-                    <div key={num} className="bg-primary/20 rounded-lg p-4">
-                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold mx-auto mb-2">
-                        {num}
-                      </div>
-                      <div className="text-sm font-medium">Factor {num}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="text-center mt-6">
-                  <Badge variant="secondary" className="px-4 py-2">
-                    Part 1 of 2 - Foundation Principles
-                  </Badge>
-                </div>
-              </div>
-
+  
               {/* Key Insights */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-6">

@@ -4,24 +4,39 @@ export const Footer = () => {
   const references = [
     {
       title: "Essential Reading for Agentic Engineers",
+      description: "Comprehensive reading list for developers entering the agentic coding space",
       url: "https://steipete.me/posts/2025/essential-reading",
-      description: "Comprehensive reading list for agentic development"
     },
     {
-      title: "12-Factor Agents GitHub",
+      title: "12-Factor-Agents GitHub",
+      description: "Official repository with code examples and detailed explanations",
       url: "https://github.com/humanlayer/12-factor-agents",
-      description: "Production principles for AI agents"
     },
     {
-      title: "Context Engineering Techniques",
-      url: "https://www.llamaindex.ai/blog/context-engineering-what-it-is-and-techniques-to-consider",
-      description: "LlamaIndex guide to context engineering"
-    },
-    {
-      title: "Anthropic's Claude Best Practices",
+      title: "Anthropic's Claude Code Best Practices",
+      description: "Official best practices for coding with Claude and other LLMs",
       url: "https://www.anthropic.com/engineering/claude-code-best-practices",
-      description: "Official Claude coding best practices"
-    }
+    },
+    {
+      title: "Building Effective AI Agents",
+      description: "Anthropic's engineering guide to building production-ready agents",
+      url: "https://www.anthropic.com/engineering/building-effective-agents",
+    },
+    {
+      title: "How Long Contexts Fail and How to Fix Them",
+      description: "Understanding context window limitations and mitigation strategies",
+      url: "https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html",
+    },
+    {
+      title: "Context Engineering: What it is, and techniques to consider",
+      description: "Deep dive into context engineering strategies and best practices",
+      url: "https://www.llamaindex.ai/blog/context-engineering-what-it-is-and-techniques-to-consider",
+    },
+    {
+      title: "Context Engineering for Agents",
+      description: "LangChain's perspective on context management for AI agents",
+      url: "https://blog.langchain.com/context-engineering-for-agents/",
+    },
   ];
 
   return (

@@ -1,121 +1,124 @@
 import { ArrowRight, ArrowLeft, Crown, Eye, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Link } from "react-router-dom";
 
 export const Slide02 = () => {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen bg-gradient-hero">
-      <div className="container py-16">
-        {/* Navigation */}
-        <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" onClick={() => navigate("/slide/1")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Previous
-          </Button>
-          <div className="flex items-center space-x-2">
-            <span className="font-mono text-sm text-muted-foreground">02 / 11</span>
-          </div>
-          <Button onClick={() => navigate("/slide/3")}>
-            Next Slide
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* Slide Content */}
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="container py-12">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center rounded-full border border-border/40 bg-card/50 px-3 py-1 text-sm font-mono mb-6">
-              <span className="text-primary">02</span>
-              <span className="mx-2 text-border">•</span>
-              <span className="text-muted-foreground">The New Mindset</span>
+          {/* Navigation */}
+          <div className="flex justify-between items-center mb-8">
+            <Link to="/slide/1">
+              <Button variant="outline" size="sm" className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Previous
+              </Button>
+            </Link>
+            <div className="flex gap-2">
+              <Badge variant="secondary">Slide 2 of 11</Badge>
+              <Badge variant="outline">Mindset</Badge>
             </div>
-            
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-              You're the{" "}
-              <span className="gradient-text">Architect</span>
-            </h1>
-            
-            <div className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              <p className="mb-4">
-                <strong className="text-foreground">The AI is your new co-worker. Treat it like one.</strong>
-              </p>
-              <p>
-                It's a brilliant, fast, but junior developer. It needs your guidance and expertise.
-              </p>
-            </div>
+            <Link to="/slide/3">
+              <Button variant="outline" size="sm" className="gap-2">
+                Next
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </div>
 
-          {/* Your New Role */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-semibold text-center mb-8 gradient-text">Your New Role:</h2>
+          {/* Slide Content */}
+          <Card className="border-primary/20">
+            <CardHeader className="text-center pb-8">
+              <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
+                <span className="gradient-text">You're the Architect</span>
+              </CardTitle>
+              <p className="text-xl text-muted-foreground">
+                The AI is your new co-worker. Treat it like one.
+              </p>
+            </CardHeader>
             
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card className="slide-card group">
-                <CardHeader>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
+            <CardContent className="space-y-8">
+              <div className="text-center mb-8">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  <strong className="text-foreground">The AI is your new co-worker. Treat it like one.</strong>
+                  It's a brilliant, fast, but junior developer. It needs your guidance and expertise.
+                </p>
+              </div>
+
+              {/* Your New Role */}
+              <div className="mb-8">
+                <h2 className="text-2xl font-semibold text-center mb-8 gradient-text">Your New Role:</h2>
+                
+                <div className="grid gap-6 md:grid-cols-3">
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-card/50 border border-primary/20">
+                    <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                       <Crown className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">Senior Architect</CardTitle>
+                    <div>
+                      <h3 className="font-semibold text-xl mb-2">Senior Architect</h3>
+                      <p className="text-muted-foreground">
+                        You design the system and break down complex problems into smaller, manageable tasks.
+                      </p>
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    You design the system and break down complex problems into smaller, manageable tasks.
-                  </p>
-                </CardContent>
-              </Card>
 
-              <Card className="slide-card group">
-                <CardHeader>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-accent/10">
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-card/50 border border-primary/20">
+                    <div className="flex-shrink-0 w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
                       <Eye className="h-6 w-6 text-accent" />
                     </div>
-                    <CardTitle className="text-xl">Project Manager</CardTitle>
+                    <div>
+                      <h3 className="font-semibold text-xl mb-2">Project Manager</h3>
+                      <p className="text-muted-foreground">
+                        You provide the AI with the right context, resources, and instructions.
+                      </p>
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    You provide the AI with the right context, resources, and instructions.
-                  </p>
-                </CardContent>
-              </Card>
 
-              <Card className="slide-card group">
-                <CardHeader>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
+                  <div className="flex items-start gap-4 p-4 rounded-lg bg-card/50 border border-primary/20">
+                    <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                       <CheckCircle className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">Quality Assurance</CardTitle>
+                    <div>
+                      <h3 className="font-semibold text-xl mb-2">Quality Assurance</h3>
+                      <p className="text-muted-foreground">
+                        You review the AI's work, provide feedback, and ensure the final output meets the required standards.
+                      </p>
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    You review the AI's work, provide feedback, and ensure the final output meets the required standards.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {/* Key Message */}
-          <Card className="bg-gradient-card border-accent/20">
-            <CardContent className="p-8 text-center">
-              <div className="text-3xl font-bold mb-4">
-                <span className="gradient-text">Your most important job is to be the human-in-the-loop.</span>
+                </div>
               </div>
-              <p className="text-lg text-muted-foreground">
-                The AI provides the speed and capability, but you provide the wisdom, judgment, and strategic direction.
-              </p>
+
+              {/* Key Message */}
+              <div className="bg-gradient-card border-accent/20 rounded-lg p-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold mb-4">
+                    <span className="gradient-text">Your most important job is to be the human-in-the-loop.</span>
+                  </div>
+                  <p className="text-lg text-muted-foreground">
+                    The AI provides the speed and capability, but you provide the wisdom, judgment, and strategic direction.
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
+
+          {/* Navigation Footer */}
+          <div className="flex justify-center mt-8">
+            <Link to="/">
+              <Button variant="outline">Back to Overview</Button>
+            </Link>
+          </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };

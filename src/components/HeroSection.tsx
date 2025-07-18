@@ -39,6 +39,12 @@ export const HeroSection = () => {
 
           {/* Key features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-2xl mx-auto">
+          <div className="flex items-center justify-center space-x-2 text-sm">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                <Users className="h-4 w-4 text-primary" />
+              </div>
+              <span className="text-muted-foreground">Agentic Coding</span>
+            </div>
             <div className="flex items-center justify-center space-x-2 text-sm">
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
                 <Zap className="h-4 w-4 text-primary" />
@@ -49,13 +55,7 @@ export const HeroSection = () => {
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/10">
                 <Terminal className="h-4 w-4 text-accent" />
               </div>
-              <span className="text-muted-foreground">12-Factor Agents</span>
-            </div>
-            <div className="flex items-center justify-center space-x-2 text-sm">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                <Users className="h-4 w-4 text-primary" />
-              </div>
-              <span className="text-muted-foreground">Production Ready</span>
+              <span className="text-muted-foreground">12-Factor-Agents</span>
             </div>
           </div>
 
@@ -69,18 +69,17 @@ export const HeroSection = () => {
               Start Learning
               <ArrowDown className="ml-2 h-4 w-4" />
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="lg"
-              asChild
+              onClick={() => {
+                const footer = document.querySelector("footer");
+                if (footer) {
+                  footer.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
             >
-              <a 
-                href="https://github.com/humanlayer/12-factor-agents" 
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View Source
-              </a>
+              View References
             </Button>
           </div>
 

@@ -1,73 +1,90 @@
-# Welcome to your Lovable project
+# A Developer's Guide to Agentic Coding
 
-## Project info
+A comprehensive slide deck application presenting best practices and principles for AI-powered software development workflows.
 
-**URL**: https://lovable.dev/projects/b2515ee6-b636-4d3a-86f5-fb7bb98671ac
+## About This Project
 
-## How can I edit this code?
+This educational presentation covers 11 key topics for developers starting their journey with AI coding assistants like Claude Code. The content focuses on practical strategies for effective collaboration with AI agents, context engineering, and building production-ready AI systems.
 
-There are several ways of editing your application.
+## Topics Covered
 
-**Use Lovable**
+1. **Welcome to the Future of Software** - Introduction to agentic coding as Software 3.0
+2. **The New Mindset: You're the Architect** - Shifting from solo coding to AI collaboration  
+3. **The Core Workflow: The Iterative Loop** - Prompt, review, refine, repeat cycle
+4. **The Most Critical Concept: Context** - Understanding context as LLM's short-term memory
+5. **The #1 Pitfall: How Context Fails** - Common context window issues and solutions
+6. **Best Practices: Context Engineering** - Techniques for effective context management
+7. **Architectural Patterns for AI Systems** - Workflows vs agents, common patterns
+8. **12-Factor Agent: Production Principles (Part 1)** - First 6 principles for robust agents
+9. **12-Factor Agent: Production Principles (Part 2)** - Remaining 6 principles
+10. **Key Takeaways & The Golden Rule** - Essential do's and don'ts
+11. **Your Journey Starts Here** - Additional resources and next steps
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b2515ee6-b636-4d3a-86f5-fb7bb98671ac) and start prompting.
+## Development
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
+- Node.js & npm (install with [nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+### Setup
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository
+git clone <repository-url>
+cd <project-directory>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Available Commands
+- `npm run dev` - Start development server on localhost:8080
+- `npm run build` - Build for production
+- `npm run build:dev` - Build for development mode
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Technology Stack
 
-**Use GitHub Codespaces**
+- **Build Tool**: Vite with React SWC plugin
+- **Framework**: React 18.3.1 with TypeScript
+- **Styling**: Tailwind CSS with shadcn/ui component library
+- **Routing**: React Router DOM
+- **Icons**: Lucide React
+- **Animations**: Tailwind CSS animations + custom keyframes
+- **Development**: ESLint, PostCSS, Autoprefixer
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deployment
 
-## What technologies are used for this project?
+This project is optimized for deployment to Cloudflare Workers. Build the project and deploy the `dist/` folder to your Cloudflare Workers site.
 
-This project is built with:
+```sh
+npm run build
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The build output will be in the `dist/` directory, ready for static hosting on Cloudflare Workers.
 
-## How can I deploy this project?
+## Project Structure
 
-Simply open [Lovable](https://lovable.dev/projects/b2515ee6-b636-4d3a-86f5-fb7bb98671ac) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```
+src/
+├── components/          # React components
+│   ├── ui/             # shadcn/ui components
+│   ├── Footer.tsx      # Footer component
+│   ├── Header.tsx      # Header component
+│   ├── HeroSection.tsx # Landing hero section
+│   └── SlideCard.tsx   # Individual slide card component
+├── data/               # Static data
+│   └── slides.ts       # Slide content data
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions
+│   └── utils.ts        # Common utilities (cn, etc.)
+├── pages/              # Route pages
+│   ├── Index.tsx       # Home page
+│   ├── NotFound.tsx    # 404 page
+│   └── slides/         # Individual slide components (Slide01-11)
+├── App.tsx             # Main app component
+├── index.css           # Global styles with CSS variables
+└── main.tsx            # Application entry point
+```

@@ -15,10 +15,28 @@ const Slide11 = () => {
       icon: <BookOpen className="w-5 h-5" />
     },
     {
-      title: "12-Factor Agents GitHub",
+      title: "12-Factor-Agents GitHub",
       description: "Official repository with code examples and detailed explanations",
       url: "https://github.com/humanlayer/12-factor-agents",
       icon: <Github className="w-5 h-5" />
+    },
+    {
+      title: "Anthropic's Claude Code Best Practices",
+      description: "Official best practices for coding with Claude and other LLMs",
+      url: "https://www.anthropic.com/engineering/claude-code-best-practices",
+      icon: <BookOpen className="w-5 h-5" />
+    },
+    {
+      title: "Building Effective AI Agents",
+      description: "Anthropic's engineering guide to building production-ready agents",
+      url: "https://www.anthropic.com/engineering/building-effective-agents",
+      icon: <BookOpen className="w-5 h-5" />
+    },
+    {
+      title: "How Long Contexts Fail and How to Fix Them",
+      description: "Understanding context window limitations and mitigation strategies",
+      url: "https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html",
+      icon: <BookOpen className="w-5 h-5" />
     },
     {
       title: "Context Engineering: What it is, and techniques to consider",
@@ -32,24 +50,6 @@ const Slide11 = () => {
       url: "https://blog.langchain.com/context-engineering-for-agents/",
       icon: <BookOpen className="w-5 h-5" />
     },
-    {
-      title: "How Long Contexts Fail and How to Fix Them",
-      description: "Understanding context window limitations and mitigation strategies",
-      url: "https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html",
-      icon: <BookOpen className="w-5 h-5" />
-    },
-    {
-      title: "Anthropic's Claude Code Best Practices",
-      description: "Official best practices for coding with Claude and other LLMs",
-      url: "https://www.anthropic.com/engineering/claude-code-best-practices",
-      icon: <BookOpen className="w-5 h-5" />
-    },
-    {
-      title: "Building Effective AI Agents",
-      description: "Anthropic's engineering guide to building production-ready agents",
-      url: "https://www.anthropic.com/engineering/building-effective-agents",
-      icon: <BookOpen className="w-5 h-5" />
-    }
   ];
 
   return (

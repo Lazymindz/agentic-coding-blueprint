@@ -62,7 +62,7 @@ const Slide09 = () => {
             </Link>
             <div className="flex gap-2">
               <Badge variant="secondary">Slide 9 of 11</Badge>
-              <Badge variant="outline">12-Factor (Part 2)</Badge>
+              <Badge variant="outline">12-Factor-Agents (Part 2)</Badge>
             </div>
             <Link to="/slide/10">
               <Button variant="outline" size="sm" className="gap-2">
@@ -108,34 +108,6 @@ const Slide09 = () => {
                 ))}
               </div>
 
-              {/* Complete 12-Factor visualization */}
-              <div className="bg-gradient-card border border-primary/20 rounded-lg p-8">
-                <h3 className="text-xl font-semibold text-center mb-6 gradient-text">
-                  Complete 12-Factor Agent Framework
-                </h3>
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-3 text-center">
-                  {[1,2,3,4,5,6,7,8,9,10,11,12].map((num) => (
-                    <div key={num} className={`rounded-lg p-3 ${num <= 6 ? 'bg-primary/20' : 'bg-secondary/50'}`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mx-auto mb-2 ${
-                        num <= 6 ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
-                      }`}>
-                        {num}
-                      </div>
-                      <div className="text-xs font-medium">Factor {num}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="grid gap-4 md:grid-cols-2 mt-6">
-                  <div className="text-center">
-                    <Badge variant="default" className="mb-2">Part 1 (1-6)</Badge>
-                    <p className="text-sm text-muted-foreground">Foundation & Control</p>
-                  </div>
-                  <div className="text-center">
-                    <Badge variant="secondary" className="mb-2">Part 2 (7-12)</Badge>
-                    <p className="text-sm text-muted-foreground">State & Deployment</p>
-                  </div>
-                </div>
-              </div>
 
               {/* Key Categories */}
               <div className="grid gap-6 md:grid-cols-3">
