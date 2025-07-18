@@ -5,8 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, BookOpen, Github, ExternalLink, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
+import SEO from "@/components/SEO";
+import { slideSEOData } from "@/data/seoData";
 
 const Slide11 = () => {
+  const seo = slideSEOData[11];
+  
   const resources = [
     {
       title: "Essential Reading for Agentic Engineers",
@@ -54,6 +58,13 @@ const Slide11 = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl="https://aiproof.me/slide/11"
+      />
+      
       <Header />
       
       <main className="container py-12">

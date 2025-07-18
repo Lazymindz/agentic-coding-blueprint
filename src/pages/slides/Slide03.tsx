@@ -5,10 +5,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, RefreshCcw } from "lucide-react";
 import { Link } from "react-router-dom";
+import SEO from "@/components/SEO";
+import { slideSEOData } from "@/data/seoData";
 
 const Slide03 = () => {
+  const seo = slideSEOData[3];
+  
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl="https://aiproof.me/slide/3"
+      />
       <Header />
       
       <main className="container py-12">

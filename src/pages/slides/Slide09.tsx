@@ -5,8 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Database, RefreshCw, AlertCircle, Users, Play, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
+import SEO from "@/components/SEO";
+import { slideSEOData } from "@/data/seoData";
 
 const Slide09 = () => {
+  const seo = slideSEOData[9];
+  
   const principles = [
     {
       number: 7,
@@ -48,6 +52,12 @@ const Slide09 = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl="https://aiproof.me/slide/9"
+      />
       <Header />
       
       <main className="container py-12">

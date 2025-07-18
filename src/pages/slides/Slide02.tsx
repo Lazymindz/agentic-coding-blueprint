@@ -5,10 +5,20 @@ import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
+import SEO from "@/components/SEO";
+import { slideSEOData } from "@/data/seoData";
 
 export const Slide02 = () => {
+  const seo = slideSEOData[2];
+  
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl="https://aiproof.me/slide/2"
+      />
       <Header />
       
       <main className="container py-12">

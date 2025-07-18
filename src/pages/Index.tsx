@@ -3,10 +3,26 @@ import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/HeroSection";
 import { SlideCard } from "@/components/SlideCard";
 import { slidesData } from "@/data/slides";
+import StructuredData from "@/components/StructuredData";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <StructuredData
+        name="A Developer's Guide to Agentic Coding"
+        description="Master AI-powered software development with comprehensive guides on agentic coding workflows, context engineering, and production-ready AI systems."
+        url="https://aiproof.me"
+        type="Course"
+        teaches={[
+          "agentic coding",
+          "AI collaboration",
+          "context engineering",
+          "production AI systems",
+          "AI workflows",
+          "software architecture",
+          "AI best practices"
+        ]}
+      />
       <Header />
       
       <main>
