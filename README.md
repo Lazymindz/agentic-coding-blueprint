@@ -2,6 +2,8 @@
 
 A comprehensive slide deck application presenting best practices and principles for AI-powered software development workflows.
 
+**Interactive Slides: [https://aiproof.me/](https://aiproof.me/)**
+
 ## About This Project
 
 This educational presentation covers 11 key topics for developers starting their journey with AI coding assistants like Claude Code. The content focuses on practical strategies for effective collaboration with AI agents, context engineering, and building production-ready AI systems.
