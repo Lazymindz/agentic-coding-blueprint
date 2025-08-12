@@ -5,12 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "build": "npm run baml:generate && vite build",
+    "build:dev": "npm run baml:generate && vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "baml:generate": "npx --package=@boundaryml/baml baml-cli generate",
+    "baml:test": "npx --package=@boundaryml/baml baml-cli test",
+    "baml:dev": "npx --package=@boundaryml/baml baml-cli dev",
+    "prebuild": "npm run baml:generate"
   },
   "dependencies": {
+    "@boundaryml/baml": "^0.204.0",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
