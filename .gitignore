@@ -38,3 +38,4 @@ baml_client/
 *.sw?
 
 /todos/worktrees/
+/todos/
