@@ -1,7 +1,7 @@
 // Text Humanization Functions
 
 function HumanizeText(request: HumanizationRequest) -> HumanizedText {
-  client OpenAI
+  client Gemini
   prompt #"
     You are an expert text humanizer. Your task is to take AI-generated or robotic text and make it sound more human, natural, and engaging while preserving the core meaning and information.
 
@@ -68,7 +68,7 @@ function HumanizeText(request: HumanizationRequest) -> HumanizedText {
 }
 
 function HumanizeTextWithFallback(request: HumanizationRequest) -> HumanizedText {
-  client OpenAI
+  client Gemini
   prompt #"
     You are an expert text humanizer. Your task is to take AI-generated or robotic text and make it sound more human, natural, and engaging while preserving the core meaning and information.
 
@@ -100,7 +100,7 @@ function HumanizeTextWithFallback(request: HumanizationRequest) -> HumanizedText
 
 // Quick humanization for shorter texts
 function QuickHumanize(text: string, style: TextStyle) -> string {
-  client OpenAI
+  client Gemini
   prompt #"
     Quickly humanize this text to sound more natural and engaging:
 

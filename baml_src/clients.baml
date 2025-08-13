@@ -18,6 +18,14 @@ client<llm> Claude {
   }
 }
 
+client<llm> Gemini {
+  provider google-ai
+  options {
+    model gemini-2.0-flash-lite
+    api_key env.GOOGLE_API_KEY
+  }
+}
+
 // Fallback configuration for high availability
 client<llm> OpenAIFallback {
   provider openai
