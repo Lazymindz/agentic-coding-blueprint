@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   const references = [
@@ -42,42 +43,74 @@ export const Footer = () => {
   return (
     <footer className="border-t border-border/40 bg-card/50">
       <div className="container py-12">
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-3">
+          {/* Platform Overview */}
           <div>
             <h3 className="font-semibold text-lg mb-4 gradient-text">
-              A Developer's Guide to Agentic Coding
+              AI Development Platform
             </h3>
             <p className="text-muted-foreground mb-4">
-              Learn the fundamentals of collaborating with AI agents to build better software faster.
+              Your complete platform for mastering AI-powered development. From learning fundamentals to using production-ready tools.
             </p>
-            <p className="text-sm text-muted-foreground">
-              Built with ❤️ for the developer community
-            </p>
+            <div className="space-y-2">
+              <Link to="/" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Platform Home
+              </Link>
+              <Link to="/blueprint" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                Learning Blueprint
+              </Link>
+              <Link to="/tools" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                AI Tools
+              </Link>
+            </div>
           </div>
 
+          {/* Blueprint Resources */}
           <div>
-            <h4 className="font-semibold mb-4">Essential References</h4>
+            <h4 className="font-semibold mb-4">Blueprint Resources</h4>
             <div className="space-y-3">
-              {references.map((ref, index) => (
+              {references.slice(0, 4).map((ref, index) => (
                 <a
                   key={index}
                   href={ref.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+                  className="group flex items-start space-x-2 text-sm"
                 >
-                  <ExternalLink className="h-4 w-4 mt-0.5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  <div>
-                    <div className="font-medium group-hover:text-primary transition-colors">
-                      {ref.title}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {ref.description}
-                    </div>
+                  <ExternalLink className="h-3 w-3 mt-0.5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                  <div className="font-medium group-hover:text-primary transition-colors line-clamp-1">
+                    {ref.title}
                   </div>
                 </a>
               ))}
+              <Link to="/blueprint" className="text-sm text-primary hover:underline">
+                View all resources →
+              </Link>
             </div>
+          </div>
+
+          {/* Tools & Community */}
+          <div>
+            <h4 className="font-semibold mb-4">Tools & Community</h4>
+            <div className="space-y-2">
+              <Link to="/tools" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                AI-Powered Tools
+              </Link>
+              <Link to="/api-test" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                API Testing
+              </Link>
+              <a 
+                href="https://github.com/Lazymindz/agentic-coding-blueprint" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                GitHub Repository
+              </a>
+            </div>
+            <p className="text-xs text-muted-foreground mt-4">
+              Built with ❤️ for the developer community
+            </p>
           </div>
         </div>
 

@@ -1,9 +1,10 @@
-import { ArrowDown, Terminal, Zap, Users } from "lucide-react";
+import { ArrowDown, Terminal, Zap, Users, BookOpen, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export const HeroSection = () => {
-  const scrollToSlides = () => {
-    document.getElementById('slides-section')?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToPlatform = () => {
+    document.getElementById('platform-sections')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -22,40 +23,41 @@ export const HeroSection = () => {
             <Terminal className="mr-2 h-3 w-3 text-primary" />
             <span className="text-muted-foreground">Software 3.0 </span>
             <span className="mx-2 text-border">•</span>
-            <span className="gradient-text font-semibold">AI-Powered Development</span>
+            <span className="gradient-text font-semibold">AI Development Platform</span>
           </div>
 
           {/* Main heading */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-            A Developer's Guide to{" "}
-            <span className="gradient-text">Agentic Coding</span>
+            Master{" "}
+            <span className="gradient-text">AI-Powered</span>
+            {" "}Development
           </h1>
 
           {/* Subtitle */}
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Master the art of collaborating with AI agents to build software. 
-            Learn context engineering, architectural patterns, and production principles.
+            From learning the fundamentals to using production-ready tools. 
+            Your complete platform for modern AI-assisted software development.
           </p>
 
-          {/* Key features */}
+          {/* Three Pillars */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-2xl mx-auto">
-          <div className="flex items-center justify-center space-x-2 text-sm">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                <Users className="h-4 w-4 text-primary" />
+            <div className="flex items-center justify-center space-x-2 text-sm">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/10">
+                <BookOpen className="h-4 w-4 text-blue-500" />
               </div>
-              <span className="text-muted-foreground">Agentic Coding</span>
+              <span className="text-muted-foreground">Learn</span>
             </div>
             <div className="flex items-center justify-center space-x-2 text-sm">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                <Zap className="h-4 w-4 text-primary" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-500/10">
+                <Wrench className="h-4 w-4 text-purple-500" />
               </div>
-              <span className="text-muted-foreground">Context Engineering</span>
+              <span className="text-muted-foreground">Apply</span>
             </div>
             <div className="flex items-center justify-center space-x-2 text-sm">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/10">
-                <Terminal className="h-4 w-4 text-accent" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/10">
+                <Terminal className="h-4 w-4 text-green-500" />
               </div>
-              <span className="text-muted-foreground">12-Factor-Agents</span>
+              <span className="text-muted-foreground">Build</span>
             </div>
           </div>
 
@@ -64,23 +66,19 @@ export const HeroSection = () => {
             <Button 
               size="lg" 
               className="glow-on-hover font-semibold"
-              onClick={scrollToSlides}
+              onClick={scrollToPlatform}
             >
-              Start Learning
+              Explore Platform
               <ArrowDown className="ml-2 h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => {
-                const footer = document.querySelector("footer");
-                if (footer) {
-                  footer.scrollIntoView({ behavior: "smooth" });
-                }
-              }}
-            >
-              View References
-            </Button>
+            <Link to="/blueprint">
+              <Button
+                variant="outline"
+                size="lg"
+              >
+                Start Learning
+              </Button>
+            </Link>
           </div>
 
           {/* Animated scroll indicator */}
@@ -88,7 +86,7 @@ export const HeroSection = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={scrollToSlides}
+              onClick={scrollToPlatform}
               className="text-muted-foreground hover:text-primary"
             >
               <ArrowDown className="h-5 w-5" />
