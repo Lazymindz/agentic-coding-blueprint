@@ -67,7 +67,7 @@ export default function ToolsHome() {
       title: "Text Humanizer",
       description: "Transform AI-generated or robotic text into natural, human-like content",
       icon: Type,
-      status: 'coming-soon' as const,
+      status: 'available' as const,
       href: "/tools/text-humanizer",
       features: [
         "Multiple style options (casual, professional, academic)",

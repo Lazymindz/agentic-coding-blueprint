@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import Home from "./pages/Home";
 import BlueprintHome from "./pages/BlueprintHome";
 import ToolsHome from "./pages/ToolsHome";
+import TextHumanizer from "./pages/tools/TextHumanizer";
 import NotFound from "./pages/NotFound";
 import ApiTest from "./pages/ApiTest";
 import SlideWrapper from "./components/SlideWrapper";
@@ -46,6 +47,7 @@ const App = () => (
           
           {/* Tools Section */}
           <Route path="/tools" element={<ToolsHome />} />
+          <Route path="/tools/text-humanizer" element={<TextHumanizer />} />
           
           {/* Legacy redirects - preserve existing links */}
           <Route path="/slide/:slideNumber" element={<LegacySlideRedirect />} />
