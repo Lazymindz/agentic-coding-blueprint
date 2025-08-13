@@ -3,6 +3,7 @@ import { z } from 'zod'
 import type { 
   HumanizationRequest, 
   HumanizedText, 
+  StreamingHumanizedText,
   TextStyle, 
   TextLength 
 } from '../../../baml_client/baml_client/types'
@@ -68,5 +69,29 @@ export class BAMLService {
    */
   static validateQuickHumanizeRequest(data: unknown): QuickHumanizeRequestInput {
     return quickHumanizeRequestSchema.parse(data)
+  }
+
+  /**
+   * Stream humanize text with real-time updates
+   */
+  static async* humanizeTextStream(request: HumanizeRequestInput): AsyncGenerator<Partial<StreamingHumanizedText>, void, unknown> {
+    const bamlRequest: HumanizationRequest = {
+      text: request.text,
+      style: request.style as TextStyle,
+      length: request.length as TextLength,
+      preserve_technical_terms: request.preserve_technical_terms,
+      target_audience: request.target_audience || undefined,
+    }
+
+    try {
+      const stream = b.stream.HumanizeTextStream(bamlRequest)
+      
+      for await (const partial of stream) {
+        yield partial
+      }
+    } catch (error) {
+      console.error('Streaming humanization error:', error)
+      throw new Error('Failed to stream humanized text')
+    }
   }
 }

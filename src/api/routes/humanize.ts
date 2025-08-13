@@ -78,6 +78,69 @@ humanize.post('/quick', async (c) => {
   }
 })
 
+// POST /humanize/stream - Streaming humanization with real-time updates
+humanize.post('/stream', async (c) => {
+  try {
+    const body = await c.req.json()
+    const validatedRequest = BAMLService.validateHumanizeRequest(body)
+    
+    // Set headers for Server-Sent Events
+    c.header('Content-Type', 'text/plain; charset=utf-8')
+    c.header('Cache-Control', 'no-cache')
+    c.header('Connection', 'keep-alive')
+    c.header('Access-Control-Allow-Origin', '*')
+    
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const partial of BAMLService.humanizeTextStream(validatedRequest)) {
+            const data = JSON.stringify({ 
+              success: true, 
+              data: partial, 
+              partial: true 
+            })
+            controller.enqueue(new TextEncoder().encode(`data: ${data}\n\n`))
+          }
+          
+          // Send final completion marker
+          const finalData = JSON.stringify({ 
+            success: true, 
+            completed: true 
+          })
+          controller.enqueue(new TextEncoder().encode(`data: ${finalData}\n\n`))
+          controller.close()
+        } catch (error) {
+          console.error('Streaming error:', error)
+          const errorData = JSON.stringify({
+            success: false,
+            error: 'Failed to stream humanized text',
+            message: error instanceof Error ? error.message : 'Unknown error'
+          })
+          controller.enqueue(new TextEncoder().encode(`data: ${errorData}\n\n`))
+          controller.close()
+        }
+      }
+    })
+    
+    return new Response(stream)
+  } catch (error) {
+    console.error('Stream setup error:', error)
+    if (error instanceof z.ZodError) {
+      return c.json({
+        success: false,
+        error: 'Invalid request data',
+        details: error.errors
+      }, 400)
+    }
+    
+    return c.json({
+      success: false,
+      error: 'Failed to setup stream',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    }, 500)
+  }
+})
+
 // GET /humanize/styles - Available humanization styles
 humanize.get('/styles', (c) => {
   return c.json({

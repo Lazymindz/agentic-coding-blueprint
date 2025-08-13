@@ -32,6 +32,15 @@ class HumanizedText {
   changes_made string[]
 }
 
+class StreamingHumanizedText {
+  original_text string @stream.done
+  humanized_text string
+  style_applied TextStyle @stream.done
+  length_change TextLength @stream.done
+  confidence_score float @stream.done
+  changes_made string[] @stream.done
+}
+
 class ErrorResponse {
   error_type string
   message string

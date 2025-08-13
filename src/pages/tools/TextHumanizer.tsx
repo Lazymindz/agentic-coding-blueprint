@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,44 +9,55 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Copy, Wand2, AlertCircle, CheckCircle2, Loader2, RefreshCw } from "lucide-react";
+import { Copy, Wand2, AlertCircle, Loader2, RefreshCw, Settings, Zap, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const HUMANIZATION_STYLES = [
-  { value: 'CONVERSATIONAL', label: 'Conversational', description: 'Direct and engaging tone' },
-  { value: 'CASUAL', label: 'Casual', description: 'Relaxed and informal tone' },
-  { value: 'PROFESSIONAL', label: 'Professional', description: 'Business-appropriate tone' },
-  { value: 'ACADEMIC', label: 'Academic', description: 'Scholarly and formal tone' },
-  { value: 'TECHNICAL', label: 'Technical', description: 'Precise and informative tone' },
-  { value: 'CREATIVE', label: 'Creative', description: 'Imaginative and expressive tone' },
+  { value: 'CONVERSATIONAL', label: 'Conversational', description: 'Direct and engaging' },
+  { value: 'CASUAL', label: 'Casual', description: 'Relaxed and informal' },
+  { value: 'PROFESSIONAL', label: 'Professional', description: 'Business-appropriate' },
+  { value: 'ACADEMIC', label: 'Academic', description: 'Scholarly and formal' },
+  { value: 'TECHNICAL', label: 'Technical', description: 'Precise and informative' },
+  { value: 'CREATIVE', label: 'Creative', description: 'Imaginative and expressive' },
 ];
 
 const LENGTH_OPTIONS = [
   { value: 'PRESERVE', label: 'Preserve', description: 'Keep similar length' },
-  { value: 'EXPAND', label: 'Expand', description: 'Add more detail and examples' },
+  { value: 'EXPAND', label: 'Expand', description: 'Add detail and examples' },
   { value: 'CONDENSE', label: 'Condense', description: 'Make more concise' },
 ];
 
 const EXAMPLE_TEXTS = [
+  "The system processes data through multiple algorithmic layers to optimize...",
+  "Implementation of advanced caching mechanisms results in substantial...",
+  "Machine learning models require extensive data preprocessing and feature..."
+];
+
+const FULL_EXAMPLE_TEXTS = [
   "The system processes data through multiple algorithmic layers to optimize performance metrics and deliver enhanced user experience outcomes.",
   "Implementation of advanced caching mechanisms results in substantial performance improvements across distributed systems.",
-  "Machine learning models require extensive data preprocessing and feature engineering to achieve optimal accuracy.",
+  "Machine learning models require extensive data preprocessing and feature engineering to achieve optimal predictive accuracy."
 ];
 
 export default function TextHumanizer() {
   const [inputText, setInputText] = useState('');
   const [outputText, setOutputText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<any>(null);
+  
+  // Configuration state
   const [style, setStyle] = useState('CONVERSATIONAL');
   const [length, setLength] = useState('PRESERVE');
   const [preserveTerms, setPreserveTerms] = useState(true);
   const [targetAudience, setTargetAudience] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<any>(null);
+  
   const { toast } = useToast();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const characterCount = inputText.length;
-  const estimatedTokens = Math.ceil(inputText.split(/\s+/).filter(word => word.length > 0).length * 1.3);
+  const estimatedTokens = Math.ceil(characterCount / 4);
 
   const copyToClipboard = useCallback(async (text: string) => {
     try {
@@ -58,7 +69,7 @@ export default function TextHumanizer() {
     } catch (err) {
       toast({
         title: "Copy failed",
-        description: "Unable to copy to clipboard",
+        description: "Please copy the text manually",
         variant: "destructive",
       });
     }
@@ -67,21 +78,36 @@ export default function TextHumanizer() {
   const loadExample = (example: string) => {
     setInputText(example);
     setError(null);
+    setOutputText('');
+    setResult(null);
   };
 
-  const humanizeText = async () => {
+  const stopStreaming = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsLoading(false);
+    setIsStreaming(false);
+  };
+
+  const humanizeTextStream = async () => {
     if (!inputText.trim()) {
       setError('Please enter some text to humanize');
       return;
     }
 
     setIsLoading(true);
+    setIsStreaming(true);
     setError(null);
     setResult(null);
     setOutputText('');
 
+    // Create abort controller for stopping stream
+    abortControllerRef.current = new AbortController();
+
     try {
-      const response = await fetch('/api/humanize', {
+      const response = await fetch('/api/humanize/stream', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,59 +119,115 @@ export default function TextHumanizer() {
           preserve_technical_terms: preserveTerms,
           target_audience: targetAudience || undefined,
         }),
+        signal: abortControllerRef.current.signal,
       });
-
-      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || `Server error: ${response.status}`);
+        throw new Error('Failed to start streaming');
       }
 
-      if (data.success && data.data) {
-        setResult(data.data);
-        setOutputText(data.data.humanized_text);
-      } else {
-        throw new Error('Invalid response format');
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error('No response stream available');
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError(errorMessage);
-      toast({
-        title: "Humanization failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
+
+      let accumulatedText = '';
+      let currentResult: any = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) {
+          break;
+        }
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.success && data.partial && data.data) {
+                // Update streaming text
+                if (data.data.humanized_text) {
+                  accumulatedText = data.data.humanized_text;
+                  setOutputText(accumulatedText);
+                }
+                
+                // Store the most complete result so far
+                if (data.data.confidence_score || data.data.changes_made) {
+                  currentResult = { ...currentResult, ...data.data };
+                  setResult(currentResult);
+                }
+              } else if (data.completed) {
+                // Streaming completed
+                break;
+              } else if (!data.success) {
+                throw new Error(data.message || 'Streaming failed');
+              }
+            } catch (parseError) {
+              console.warn('Failed to parse streaming data:', parseError);
+            }
+          }
+        }
+      }
+
+      if (accumulatedText) {
+        toast({
+          title: "Success!",
+          description: "Text humanized successfully",
+        });
+      }
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        toast({
+          title: "Stopped",
+          description: "Streaming was stopped",
+        });
+      } else {
+        console.error('Streaming error:', error);
+        setError(error.message || 'An unexpected error occurred');
+        toast({
+          title: "Error",
+          description: "Failed to humanize text. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
+      setIsStreaming(false);
+      abortControllerRef.current = null;
     }
   };
-
-  const selectedStyle = HUMANIZATION_STYLES.find(s => s.value === style);
-  const selectedLength = LENGTH_OPTIONS.find(l => l.value === length);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950 to-blue-950">
       <Header />
       
-      <main className="container py-8 max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">
+      <main className="container mx-auto px-6 py-8">
+        {/* Compact Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
             Text Humanizer
           </h1>
-          <p className="text-xl text-purple-100 max-w-3xl">
-            Transform AI-generated or robotic text into natural, human-like content. 
-            Choose from multiple styles and customize the output for your needs.
+          <p className="text-lg text-purple-100 max-w-2xl mx-auto">
+            Transform AI-generated text into natural, human-like content with real-time streaming.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Input Section */}
-          <div className="space-y-6">
+        {/* Main Layout - Left/Right Panels */}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-6 mb-6">
+            {/* Left Panel - Input */}
             <Card className="bg-gray-900/50 border-purple-500/20">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-white flex items-center gap-2 text-lg">
                   <Wand2 className="w-5 h-5 text-purple-400" />
-                  Input Text
+                  Before (Original Text)
                 </CardTitle>
                 <CardDescription>
                   Enter the text you want to humanize
@@ -153,13 +235,11 @@ export default function TextHumanizer() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="input-text" className="text-white">Text to humanize</Label>
                   <Textarea
-                    id="input-text"
                     placeholder="Paste your AI-generated or robotic text here..."
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    className="min-h-[200px] mt-2 bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                    className="min-h-[300px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 focus:border-purple-500 transition-colors resize-none"
                   />
                   <div className="flex justify-between items-center mt-2 text-sm text-gray-400">
                     <span>{characterCount} characters • ~{estimatedTokens} tokens</span>
@@ -171,19 +251,19 @@ export default function TextHumanizer() {
                   </div>
                 </div>
 
-                {/* Examples */}
+                {/* Quick Examples */}
                 <div>
-                  <Label className="text-white">Quick Examples</Label>
-                  <div className="space-y-2 mt-2">
+                  <Label className="text-white text-sm font-medium">Quick Examples</Label>
+                  <div className="space-y-1 mt-2">
                     {EXAMPLE_TEXTS.map((example, index) => (
                       <Button
                         key={index}
                         variant="outline"
                         size="sm"
-                        className="h-auto p-3 text-left justify-start border-gray-700 hover:border-purple-500 text-gray-300 hover:text-white"
-                        onClick={() => loadExample(example)}
+                        className="w-full h-auto p-2 text-left justify-start border-gray-700 hover:border-purple-500 text-gray-300 hover:text-white transition-colors text-xs leading-tight"
+                        onClick={() => loadExample(FULL_EXAMPLE_TEXTS[index])}
                       >
-                        <div className="truncate">{example}</div>
+                        <span className="text-left">{example}</span>
                       </Button>
                     ))}
                   </div>
@@ -191,119 +271,41 @@ export default function TextHumanizer() {
               </CardContent>
             </Card>
 
-            {/* Options */}
+            {/* Right Panel - Output */}
             <Card className="bg-gray-900/50 border-purple-500/20">
-              <CardHeader>
-                <CardTitle className="text-white">Humanization Options</CardTitle>
-                <CardDescription>
-                  Customize how your text should be transformed
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Style Selection */}
-                <div>
-                  <Label className="text-white">Style</Label>
-                  <Select value={style} onValueChange={setStyle}>
-                    <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {HUMANIZATION_STYLES.map((style) => (
-                        <SelectItem key={style.value} value={style.value}>
-                          <div>
-                            <div className="font-medium">{style.label}</div>
-                            <div className="text-sm text-gray-400">{style.description}</div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {selectedStyle && (
-                    <p className="text-sm text-gray-400 mt-1">{selectedStyle.description}</p>
-                  )}
-                </div>
-
-                {/* Length Control */}
-                <div>
-                  <Label className="text-white">Length</Label>
-                  <Select value={length} onValueChange={setLength}>
-                    <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LENGTH_OPTIONS.map((length) => (
-                        <SelectItem key={length.value} value={length.value}>
-                          <div>
-                            <div className="font-medium">{length.label}</div>
-                            <div className="text-sm text-gray-400">{length.description}</div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {selectedLength && (
-                    <p className="text-sm text-gray-400 mt-1">{selectedLength.description}</p>
-                  )}
-                </div>
-
-                {/* Technical Terms */}
-                <div className="flex items-center justify-between">
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between">
                   <div>
-                    <Label className="text-white">Preserve Technical Terms</Label>
-                    <p className="text-sm text-gray-400">Keep technical terminology unchanged</p>
+                    <CardTitle className="text-white flex items-center gap-2 text-lg">
+                      <Zap className="w-5 h-5 text-green-400" />
+                      After (Humanized Text)
+                    </CardTitle>
+                    <CardDescription>
+                      Your transformed, human-like content
+                    </CardDescription>
                   </div>
-                  <Switch
-                    checked={preserveTerms}
-                    onCheckedChange={setPreserveTerms}
-                  />
+                  
+                  {/* Stats in Header */}
+                  <div className="flex items-center gap-4 text-sm">
+                    {result?.style_applied && (
+                      <div className="text-right">
+                        <div className="text-gray-400 text-xs">Style</div>
+                        <div className="text-white font-medium">
+                          {HUMANIZATION_STYLES.find(s => s.value === result.style_applied)?.label || 'N/A'}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {(result?.confidence_score || isLoading) && (
+                      <div className="text-right">
+                        <div className="text-gray-400 text-xs">Confidence</div>
+                        <div className={`text-white font-medium ${isLoading ? 'animate-pulse' : ''}`}>
+                          {isLoading ? '...' : `${result.confidence_score ? Math.round(result.confidence_score * 100) : 0}%`}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                {/* Target Audience */}
-                <div>
-                  <Label className="text-white">Target Audience (Optional)</Label>
-                  <input
-                    type="text"
-                    placeholder="e.g., developers, general audience, students"
-                    value={targetAudience}
-                    onChange={(e) => setTargetAudience(e.target.value)}
-                    className="w-full mt-2 px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder:text-gray-400 focus:border-purple-500 focus:outline-none"
-                  />
-                </div>
-
-                {/* Humanize Button */}
-                <Button
-                  onClick={humanizeText}
-                  disabled={isLoading || !inputText.trim() || characterCount > 5000}
-                  className="w-full bg-purple-600 hover:bg-purple-500 text-white"
-                  size="lg"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Humanizing...
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="w-4 h-4 mr-2" />
-                      Humanize Text
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Output Section */}
-          <div className="space-y-6">
-            <Card className="bg-gray-900/50 border-purple-500/20">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-400" />
-                  Humanized Text
-                </CardTitle>
-                <CardDescription>
-                  Your transformed, human-like content
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 {error && (
@@ -314,8 +316,8 @@ export default function TextHumanizer() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={humanizeText}
-                        className="ml-4 border-red-500/40 text-red-300 hover:bg-red-500/20"
+                        onClick={humanizeTextStream}
+                        className="ml-3 border-red-500/40 text-red-300 hover:bg-red-500/20"
                       >
                         <RefreshCw className="w-3 h-3 mr-1" />
                         Retry
@@ -324,78 +326,151 @@ export default function TextHumanizer() {
                   </Alert>
                 )}
 
-                {outputText ? (
-                  <div className="space-y-4">
-                    <div className="relative">
-                      <Textarea
-                        value={outputText}
-                        readOnly
-                        className="min-h-[200px] bg-gray-800 border-gray-700 text-white"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => copyToClipboard(outputText)}
-                        className="absolute top-2 right-2 border-gray-700 hover:border-purple-500"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
+                <div className="relative">
+                  <Textarea
+                    value={outputText}
+                    readOnly
+                    placeholder={isLoading ? "" : "Humanized text will appear here"}
+                    className={`min-h-[300px] bg-gray-800 border-gray-700 text-white resize-none focus:border-purple-500 ${isLoading ? 'animate-pulse' : ''}`}
+                  />
+                  {outputText && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(outputText)}
+                      className="absolute top-3 right-3 border-gray-700 hover:border-purple-500 bg-gray-900/80 backdrop-blur-sm"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  )}
+                  
+                  {isLoading && !outputText && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center space-y-2">
+                        <Loader2 className="w-6 h-6 animate-spin text-purple-400" />
+                        <p className="text-purple-300 text-sm">Starting humanization...</p>
+                      </div>
                     </div>
-
-                    {result && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-gray-800/50 p-3 rounded-lg">
-                          <Label className="text-gray-400">Style Applied</Label>
-                          <p className="text-white font-medium">
-                            {HUMANIZATION_STYLES.find(s => s.value === result.style_applied)?.label}
-                          </p>
-                        </div>
-                        <div className="bg-gray-800/50 p-3 rounded-lg">
-                          <Label className="text-gray-400">Confidence</Label>
-                          <p className="text-white font-medium">
-                            {Math.round((result.confidence_score || 0) * 100)}%
-                          </p>
-                        </div>
+                  )}
+                  
+                  {isLoading && outputText && (
+                    <div className="absolute top-3 left-3">
+                      <div className="flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm px-2 py-1 rounded-md border border-purple-500/30">
+                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                        <span className="text-purple-300 text-xs font-medium">Live</span>
                       </div>
-                    )}
+                    </div>
+                  )}
+                </div>
 
-                    {result?.changes_made && result.changes_made.length > 0 && (
-                      <div className="bg-gray-800/50 p-3 rounded-lg">
-                        <Label className="text-gray-400">Key Improvements</Label>
-                        <ul className="text-white text-sm mt-2 space-y-1">
-                          {result.changes_made.slice(0, 3).map((change: string, index: number) => (
-                            <li key={index}>• {change}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="min-h-[200px] bg-gray-800 border border-gray-700 rounded-md flex items-center justify-center">
-                    <p className="text-gray-400">
-                      {isLoading ? 'Humanizing your text...' : 'Humanized text will appear here'}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Usage Tips */}
-            <Card className="bg-gray-900/50 border-purple-500/20">
-              <CardHeader>
-                <CardTitle className="text-white text-lg">Usage Tips</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="text-gray-300 text-sm space-y-2">
-                  <li>• <strong>Conversational</strong> works best for blog posts and casual content</li>
-                  <li>• <strong>Professional</strong> is ideal for business communications</li>
-                  <li>• <strong>Technical</strong> maintains accuracy while improving readability</li>
-                  <li>• Use <strong>Expand</strong> to add examples and detailed explanations</li>
-                  <li>• <strong>Preserve Terms</strong> keeps technical jargon intact</li>
-                </ul>
               </CardContent>
             </Card>
           </div>
+
+          {/* Bottom Section - Options and Button */}
+          <div className="grid lg:grid-cols-4 gap-4 items-end">
+            {/* Style Selection */}
+            <div>
+              <Label className="text-white text-sm font-medium">Style</Label>
+              <Select value={style} onValueChange={(value: any) => setStyle(value)}>
+                <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white hover:border-purple-500 transition-colors">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  {HUMANIZATION_STYLES.map((styleOption) => (
+                    <SelectItem key={styleOption.value} value={styleOption.value} className="text-white hover:bg-gray-700">
+                      <div>
+                        <div className="font-medium">{styleOption.label}</div>
+                        <div className="text-xs text-gray-400">{styleOption.description}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Length Control */}
+            <div>
+              <Label className="text-white text-sm font-medium">Length</Label>
+              <Select value={length} onValueChange={(value: any) => setLength(value)}>
+                <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white hover:border-purple-500 transition-colors">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  {LENGTH_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value} className="text-white hover:bg-gray-700">
+                      <div>
+                        <div className="font-medium">{option.label}</div>
+                        <div className="text-xs text-gray-400">{option.description}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Additional Options */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-white text-sm font-medium">Preserve Terms</Label>
+                <Switch
+                  checked={preserveTerms}
+                  onCheckedChange={setPreserveTerms}
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Target audience (optional)"
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder:text-gray-400 focus:border-purple-500 focus:outline-none transition-colors text-sm"
+              />
+            </div>
+
+            {/* Action Button */}
+            <div className="flex gap-2">
+              {isStreaming ? (
+                <Button
+                  onClick={stopStreaming}
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white transition-colors"
+                  size="lg"
+                >
+                  Stop
+                </Button>
+              ) : (
+                <Button
+                  onClick={humanizeTextStream}
+                  disabled={!inputText.trim() || characterCount > 5000}
+                  className="flex-1 bg-purple-600 hover:bg-purple-500 text-white transition-colors"
+                  size="lg"
+                >
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Humanize
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Key Improvements */}
+          {result?.changes_made && result.changes_made.length > 0 && outputText && (
+            <Card className="bg-gray-900/50 border-purple-500/20 mt-6">
+              <CardHeader>
+                <CardTitle className="text-white text-lg">Key Improvements</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {result.changes_made.slice(0, 4).map((change: string, index: number) => (
+                    <div key={index} className="flex items-start gap-2 text-sm">
+                      <div className="w-5 h-5 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                      <span className="text-gray-300">{change}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
       
