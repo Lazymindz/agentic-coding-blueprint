@@ -30,7 +30,7 @@ export default function Home() {
 
             <div className="grid md:grid-cols-2 gap-8 mb-16 max-w-4xl mx-auto">
               {/* Blueprint Section */}
-              <Card className="slide-card border-8 border-black bg-background shadow-brutal group">
+              <Card className="slide-card border-8 border-black bg-background shadow-brutal group flex flex-col">
                 <CardHeader>
                   <div className="color-accent-blue border-4 border-black p-4 mb-4">
                     <BookOpen className="w-8 h-8 text-black" />
@@ -40,8 +40,8 @@ export default function Home() {
                     MASTER THE FUNDAMENTALS OF AGENTIC CODING WITH OUR COMPREHENSIVE GUIDE
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="font-mono text-sm uppercase mb-6">
+                <CardContent className="flex-1 flex flex-col">
+                  <p className="font-mono text-sm uppercase mb-6 flex-1">
                     11 INTERACTIVE SLIDES COVERING EVERYTHING FROM THE NEW MINDSET TO PRODUCTION PRINCIPLES. 
                     LEARN CONTEXT ENGINEERING, ARCHITECTURAL PATTERNS, AND THE 12-FACTOR AGENT METHODOLOGY.
                   </p>
@@ -54,7 +54,7 @@ export default function Home() {
               </Card>
 
               {/* Tools Section */}
-              <Card className="slide-card border-8 border-black bg-background shadow-brutal group">
+              <Card className="slide-card border-8 border-black bg-background shadow-brutal group flex flex-col">
                 <CardHeader>
                   <div className="color-accent-red border-4 border-black p-4 mb-4">
                     <Wrench className="w-8 h-8 text-white" />
@@ -64,8 +64,8 @@ export default function Home() {
                     PRACTICAL TOOLS TO ASSIST WITH YOUR EVERYDAY PROFESSIONAL TASKS
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="font-mono text-sm uppercase mb-6">
+                <CardContent className="flex-1 flex flex-col">
+                  <p className="font-mono text-sm uppercase mb-6 flex-1">
                     TIME-SAVING AI TOOLS FOR WRITING, COMMUNICATION, AND PRODUCTIVITY. 
                     DESIGNED TO SEAMLESSLY INTEGRATE INTO YOUR DAILY WORKFLOW.
                   </p>
