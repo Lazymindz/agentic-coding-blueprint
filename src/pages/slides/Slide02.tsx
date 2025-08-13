@@ -2,8 +2,6 @@ import { ArrowRight, ArrowLeft, Crown, Eye, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
 import SEO from "@/components/SEO";
 import { slideSEOData } from "@/data/seoData";
@@ -19,32 +17,31 @@ export const Slide02 = () => {
         keywords={seo.keywords}
         canonicalUrl="https://aiproof.me/slide/2"
       />
-      <Header />
       
       <main className="container py-12">
         <div className="max-w-4xl mx-auto">
           {/* Navigation */}
           <div className="flex justify-between items-center mb-8">
             <Link to="/slide/1">
-              <Button variant="outline" size="sm" className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                Previous
-              </Button>
+              <button className="brutal-button-compact bg-secondary text-secondary-foreground">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                PREVIOUS
+              </button>
             </Link>
             <div className="flex gap-2">
-              <Badge variant="secondary">Slide 2 of 11</Badge>
-              <Badge variant="outline">Mindset</Badge>
+              <div className="px-3 py-1 font-black uppercase text-xs border-4 border-black bg-accent text-accent-foreground">SLIDE 2 OF 11</div>
+              <div className="px-3 py-1 font-black uppercase text-xs border-4 border-black bg-secondary text-secondary-foreground">MINDSET</div>
             </div>
             <Link to="/slide/3">
-              <Button variant="outline" size="sm" className="gap-2">
-                Next
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+              <button className="brutal-button-compact bg-accent text-accent-foreground">
+                NEXT
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </button>
             </Link>
           </div>
 
           {/* Slide Content */}
-          <Card className="border-primary/20">
+          <Card className="slide-card border-8 border-black bg-background shadow-brutal">
             <CardHeader className="text-center pb-8">
               <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
                 <span className="gradient-text">You're the Architect</span>
@@ -121,14 +118,13 @@ export const Slide02 = () => {
 
           {/* Navigation Footer */}
           <div className="flex justify-center mt-8">
-            <Link to="/">
+            <Link to="/blueprint">
               <Button variant="outline">Back to Overview</Button>
             </Link>
           </div>
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 };

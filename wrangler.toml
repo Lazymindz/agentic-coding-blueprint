@@ -1,6 +1,7 @@
 name = "aiproof-me"
 main = "src/worker.ts"
-compatibility_date = "2024-05-01"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
 
 [assets]
 directory = "./dist"
@@ -8,3 +9,12 @@ binding = "ASSETS"
 
 [observability.logs]
 enabled = true
+
+# Environment variables for AI API keys
+# Set these via Cloudflare dashboard for production
+# For local development, values will be read from .env file
+[env.production.vars]
+# Set via Cloudflare dashboard:
+# OPENAI_API_KEY = "your-openai-key"
+# ANTHROPIC_API_KEY = "your-anthropic-key" 
+# GOOGLE_API_KEY = "your-google-key"

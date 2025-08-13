@@ -10,72 +10,69 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Core developer-focused color palette */
-    --background: 210 24% 6%;
-    --foreground: 210 40% 98%;
+    /* Bauhaus Brutalism color palette */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
 
-    --card: 215 25% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
 
-    --popover: 215 25% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
 
-    /* Primary: Bright cyan/blue for terminal/coding theme */
-    --primary: 195 100% 60%;
-    --primary-foreground: 210 24% 6%;
-    --primary-glow: 195 100% 70%;
+    /* Primary: Bauhaus Red */
+    --primary: 0 90% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Muted blue-gray */
-    --secondary: 215 16% 15%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary: Bauhaus Blue */
+    --secondary: 220 90% 53%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 16% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 20%;
 
-    /* Accent: Purple for highlights */
-    --accent: 270 91% 65%;
-    --accent-foreground: 210 24% 6%;
+    /* Accent: Bauhaus Yellow */
+    --accent: 48 96% 53%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 215 25% 12%;
-    --input: 215 25% 12%;
-    --ring: 195 100% 60%;
+    --border: 0 0% 0%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 0%;
 
-    --radius: 0.75rem;
+    --radius: 0rem;
+  }
 
-    /* Gradients for visual impact */
-    --gradient-primary: linear-gradient(135deg, hsl(195 100% 60%), hsl(270 91% 65%));
-    --gradient-card: linear-gradient(145deg, hsl(215 25% 8%), hsl(215 25% 10%));
-    --gradient-hero: linear-gradient(135deg, hsl(210 24% 6%) 0%, hsl(215 25% 8%) 50%, hsl(210 24% 6%) 100%);
-    
-    /* Shadows with primary color glow */
-    --shadow-card: 0 4px 20px -2px hsl(195 100% 60% / 0.1);
-    --shadow-card-hover: 0 8px 40px -4px hsl(195 100% 60% / 0.2);
-    --shadow-glow: 0 0 40px hsl(195 100% 60% / 0.3);
-
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  .dark {
+    /* Dark mode: Invert to black background */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --border: 0 0% 100%;
+    --input: 0 0% 10%;
+    --ring: 0 0% 100%;
+    --muted: 0 0% 4%;
+    --muted-foreground: 0 0% 80%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-black;
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-mono antialiased;
     background: hsl(var(--background));
-    background-image: 
-      radial-gradient(circle at 25% 25%, hsl(195 100% 60% / 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, hsl(270 91% 65% / 0.05) 0%, transparent 50%);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight;
+    @apply font-black tracking-tighter uppercase;
   }
 
   code {
@@ -84,70 +81,71 @@ All colors MUST be HSL.
 }
 
 @layer components {
-  /* Slide card animations */
+  /* Bauhaus Brutalist slide cards */
   .slide-card {
-    @apply relative overflow-hidden bg-card border border-border rounded-lg p-6;
-    @apply transition-all duration-300 ease-out;
-    @apply hover:border-primary/40 hover:shadow-[0_8px_40px_-4px_hsl(var(--primary)/0.2)];
-    @apply cursor-pointer;
-    background: var(--gradient-card);
+    @apply relative bg-card border-8 border-black p-6;
+    @apply transition-all duration-200 ease-out;
+    @apply hover:shadow-brutal cursor-pointer;
   }
 
-  .slide-card:hover {
-    transform: translateY(-4px);
+  /* Removed slide-card hover movement for better consistency */
+
+  /* Brutalist buttons */
+  .brutal-button {
+    @apply bg-primary text-primary-foreground border-4 border-black;
+    @apply px-6 py-3 font-black uppercase tracking-tight;
+    @apply hover:shadow-brutal transition-all duration-200;
+    @apply hover:translate-x-1 hover:-translate-y-1;
   }
 
-  .slide-card::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5;
-    @apply opacity-0 transition-opacity duration-300;
+  .brutal-button-compact {
+    @apply bg-primary text-primary-foreground border-4 border-black;
+    @apply px-4 py-2 font-black uppercase tracking-tight text-sm;
+    @apply hover:shadow-brutal transition-all duration-200;
+    @apply hover:translate-x-1 hover:-translate-y-1;
+    @apply whitespace-nowrap;
   }
 
-  .slide-card:hover::before {
-    @apply opacity-100;
+  /* Geometric shapes */
+  .bauhaus-square {
+    @apply w-8 h-8 border-4 border-black;
   }
 
-  /* Terminal-style text effect */
-  .terminal-text {
-    @apply font-mono;
-    color: hsl(var(--primary));
+  .bauhaus-circle {
+    @apply w-8 h-8 border-4 border-black rounded-full;
   }
 
-  /* Gradient text effect */
-  .gradient-text {
-    background: var(--gradient-primary);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .bauhaus-triangle {
+    width: 0;
+    height: 0;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-bottom: 28px solid black;
   }
 
-  /* Animated underline */
-  .animated-link {
-    @apply relative inline-block;
+  /* Brutalist text effects */
+  .brutal-text {
+    @apply font-black uppercase tracking-tighter;
+    text-shadow: 2px 2px 0px black;
   }
 
-  .animated-link::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary;
-    @apply transition-all duration-300 ease-out;
+  .brutal-link {
+    @apply relative inline-block font-black uppercase;
+    @apply hover:shadow-brutal transition-all duration-200;
+    @apply hover:translate-x-1 hover:-translate-y-1;
   }
 
-  .animated-link:hover::after {
-    @apply w-full;
+  /* Color block accents */
+  .color-accent-red {
+    @apply bg-primary;
   }
 
-  /* Glow effect */
-  .glow-on-hover:hover {
-    box-shadow: var(--shadow-glow);
+  .color-accent-blue {
+    @apply bg-secondary;
+  }
+
+  .color-accent-yellow {
+    @apply bg-accent;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
-}
