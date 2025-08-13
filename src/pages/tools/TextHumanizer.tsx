@@ -354,7 +354,7 @@ export default function TextHumanizer() {
                 <div className="relative">
                   <Textarea
                     placeholder="Your humanized text will appear here..."
-                    {...(outputText ? { value: outputText } : { defaultValue: "" })}
+                    value={outputText}
                     className="min-h-[300px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500 transition-colors resize-none"
                     readOnly
                   />
