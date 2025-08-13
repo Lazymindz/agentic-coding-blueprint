@@ -1,31 +1,21 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Slide01 } from "@/pages/slides/Slide01";
-import { Slide02 } from "@/pages/slides/Slide02";
-import Slide03 from "@/pages/slides/Slide03";
-import Slide04 from "@/pages/slides/Slide04";
-import Slide05 from "@/pages/slides/Slide05";
-import Slide06 from "@/pages/slides/Slide06";
-import Slide07 from "@/pages/slides/Slide07";
-import Slide08 from "@/pages/slides/Slide08";
-import Slide09 from "@/pages/slides/Slide09";
-import Slide10 from "@/pages/slides/Slide10";
-import Slide11 from "@/pages/slides/Slide11";
 
+// Lazy load slide components
 const slideComponents = {
-  '1': Slide01,
-  '2': Slide02,
-  '3': Slide03,
-  '4': Slide04,
-  '5': Slide05,
-  '6': Slide06,
-  '7': Slide07,
-  '8': Slide08,
-  '9': Slide09,
-  '10': Slide10,
-  '11': Slide11,
+  '1': lazy(() => import("@/pages/slides/Slide01").then(m => ({ default: m.Slide01 }))),
+  '2': lazy(() => import("@/pages/slides/Slide02").then(m => ({ default: m.Slide02 }))),
+  '3': lazy(() => import("@/pages/slides/Slide03")),
+  '4': lazy(() => import("@/pages/slides/Slide04")),
+  '5': lazy(() => import("@/pages/slides/Slide05")),
+  '6': lazy(() => import("@/pages/slides/Slide06")),
+  '7': lazy(() => import("@/pages/slides/Slide07")),
+  '8': lazy(() => import("@/pages/slides/Slide08")),
+  '9': lazy(() => import("@/pages/slides/Slide09")),
+  '10': lazy(() => import("@/pages/slides/Slide10")),
+  '11': lazy(() => import("@/pages/slides/Slide11")),
 };
 
 export default function SlideWrapper() {
@@ -40,7 +30,16 @@ export default function SlideWrapper() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <SlideComponent />
+      <Suspense fallback={
+        <div className="container mx-auto px-6 py-8 flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading slide...</p>
+          </div>
+        </div>
+      }>
+        <SlideComponent />
+      </Suspense>
       <Footer />
     </div>
   );
