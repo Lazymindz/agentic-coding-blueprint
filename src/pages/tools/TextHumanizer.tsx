@@ -205,17 +205,25 @@ export default function TextHumanizer() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950 to-blue-950">
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-6 py-8">
+      {/* Bauhaus geometric elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-16 h-16 color-accent-red border-4 border-black rotate-12" />
+        <div className="absolute top-40 right-16 w-20 h-20 color-accent-blue border-4 border-black -rotate-12" />
+        <div className="absolute bottom-32 left-20 w-12 h-12 color-accent-yellow border-4 border-black rotate-45" />
+        <div className="absolute bottom-20 right-10 w-14 h-14 bg-black rotate-12" />
+      </div>
+      
+      <main className="container mx-auto px-6 py-8 relative z-10">
         {/* Compact Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
-            Text Humanizer
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
+            TEXT HUMANIZER
           </h1>
-          <p className="text-lg text-purple-100 max-w-2xl mx-auto">
-            Transform AI-generated text into natural, human-like content with real-time streaming.
+          <p className="text-lg font-mono uppercase max-w-2xl mx-auto">
+            TRANSFORM AI-GENERATED TEXT INTO NATURAL, PROFESSIONAL COMMUNICATION
           </p>
         </div>
 
@@ -223,14 +231,16 @@ export default function TextHumanizer() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-6 mb-6">
             {/* Left Panel - Input */}
-            <Card className="bg-gray-900/50 border-purple-500/20">
+            <Card className="slide-card border-8 border-black bg-background shadow-brutal">
               <CardHeader className="pb-4">
-                <CardTitle className="text-white flex items-center gap-2 text-lg">
-                  <Wand2 className="w-5 h-5 text-purple-400" />
-                  Before (Original Text)
+                <CardTitle className="font-black uppercase tracking-tighter text-xl flex items-center gap-2">
+                  <div className="color-accent-blue border-4 border-black p-2">
+                    <Wand2 className="w-5 h-5 text-black" />
+                  </div>
+                  BEFORE (ORIGINAL TEXT)
                 </CardTitle>
-                <CardDescription>
-                  Enter the text you want to humanize
+                <CardDescription className="font-mono uppercase text-xs">
+                  ENTER THE TEXT YOU WANT TO HUMANIZE
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -241,7 +251,7 @@ export default function TextHumanizer() {
                     onChange={(e) => setInputText(e.target.value)}
                     className="min-h-[300px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 focus:border-purple-500 transition-colors resize-none"
                   />
-                  <div className="flex justify-between items-center mt-2 text-sm text-gray-400">
+                  <div className="flex justify-between items-center mt-2 text-sm font-mono">
                     <span>{characterCount} characters • ~{estimatedTokens} tokens</span>
                     {characterCount > 5000 && (
                       <Badge variant="destructive" className="text-xs">
@@ -253,18 +263,16 @@ export default function TextHumanizer() {
 
                 {/* Quick Examples */}
                 <div>
-                  <Label className="text-white text-sm font-medium">Quick Examples</Label>
+                  <Label className="font-black uppercase text-sm">Quick Examples</Label>
                   <div className="space-y-1 mt-2">
                     {EXAMPLE_TEXTS.map((example, index) => (
-                      <Button
+                      <button
                         key={index}
-                        variant="outline"
-                        size="sm"
-                        className="w-full h-auto p-2 text-left justify-start border-gray-700 hover:border-purple-500 text-gray-300 hover:text-white transition-colors text-xs leading-tight"
+                        className="w-full h-auto p-2 text-left justify-start border-4 border-black bg-background hover:shadow-brutal transition-all duration-200 text-xs leading-tight font-mono uppercase"
                         onClick={() => loadExample(FULL_EXAMPLE_TEXTS[index])}
                       >
                         <span className="text-left">{example}</span>
-                      </Button>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -272,40 +280,17 @@ export default function TextHumanizer() {
             </Card>
 
             {/* Right Panel - Output */}
-            <Card className="bg-gray-900/50 border-purple-500/20">
+            <Card className="slide-card border-8 border-black bg-background shadow-brutal">
               <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-white flex items-center gap-2 text-lg">
-                      <Zap className="w-5 h-5 text-green-400" />
-                      After (Humanized Text)
-                    </CardTitle>
-                    <CardDescription>
-                      Your transformed, human-like content
-                    </CardDescription>
+                <CardTitle className="font-black uppercase tracking-tighter text-xl flex items-center gap-2">
+                  <div className="color-accent-yellow border-4 border-black p-2">
+                    <Zap className="w-5 h-5 text-black" />
                   </div>
-                  
-                  {/* Stats in Header */}
-                  <div className="flex items-center gap-4 text-sm">
-                    {result?.style_applied && (
-                      <div className="text-right">
-                        <div className="text-gray-400 text-xs">Style</div>
-                        <div className="text-white font-medium">
-                          {HUMANIZATION_STYLES.find(s => s.value === result.style_applied)?.label || 'N/A'}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {(result?.confidence_score || isLoading) && (
-                      <div className="text-right">
-                        <div className="text-gray-400 text-xs">Confidence</div>
-                        <div className={`text-white font-medium ${isLoading ? 'animate-pulse' : ''}`}>
-                          {isLoading ? '...' : `${result.confidence_score ? Math.round(result.confidence_score * 100) : 0}%`}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                  AFTER (HUMANIZED TEXT)
+                </CardTitle>
+                <CardDescription className="font-mono uppercase text-xs">
+                  YOUR TRANSFORMED, HUMAN-LIKE CONTENT
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {error && (
@@ -334,14 +319,13 @@ export default function TextHumanizer() {
                     className={`min-h-[300px] bg-gray-800 border-gray-700 text-white resize-none focus:border-purple-500 ${isLoading ? 'animate-pulse' : ''}`}
                   />
                   {outputText && (
-                    <Button
-                      variant="outline"
-                      size="sm"
+                    <button
                       onClick={() => copyToClipboard(outputText)}
-                      className="absolute top-3 right-3 border-gray-700 hover:border-purple-500 bg-gray-900/80 backdrop-blur-sm"
+                      className="absolute bottom-3 right-3 brutal-button-compact bg-accent text-accent-foreground"
                     >
-                      <Copy className="w-4 h-4" />
-                    </Button>
+                      <Copy className="w-4 h-4 mr-2" />
+                      COPY
+                    </button>
                   )}
                   
                   {isLoading && !outputText && (
@@ -354,10 +338,10 @@ export default function TextHumanizer() {
                   )}
                   
                   {isLoading && outputText && (
-                    <div className="absolute top-3 left-3">
-                      <div className="flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm px-2 py-1 rounded-md border border-purple-500/30">
-                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                        <span className="text-purple-300 text-xs font-medium">Live</span>
+                    <div className="absolute bottom-3 left-3">
+                      <div className="flex items-center gap-2 bg-secondary border-4 border-black px-3 py-1 shadow-brutal">
+                        <div className="w-2 h-2 color-accent-red border border-black animate-pulse"></div>
+                        <span className="text-black text-xs font-black uppercase">LIVE</span>
                       </div>
                     </div>
                   )}
@@ -371,17 +355,17 @@ export default function TextHumanizer() {
           <div className="grid lg:grid-cols-4 gap-4 items-end">
             {/* Style Selection */}
             <div>
-              <Label className="text-white text-sm font-medium">Style</Label>
+              <Label className="font-black uppercase text-sm">Style</Label>
               <Select value={style} onValueChange={(value: any) => setStyle(value)}>
-                <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white hover:border-purple-500 transition-colors">
+                <SelectTrigger className="mt-2 bg-background border-4 border-black hover:shadow-brutal transition-all">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700">
+                <SelectContent className="bg-background border-4 border-black">
                   {HUMANIZATION_STYLES.map((styleOption) => (
-                    <SelectItem key={styleOption.value} value={styleOption.value} className="text-white hover:bg-gray-700">
+                    <SelectItem key={styleOption.value} value={styleOption.value} className="hover:bg-accent">
                       <div>
-                        <div className="font-medium">{styleOption.label}</div>
-                        <div className="text-xs text-gray-400">{styleOption.description}</div>
+                        <div className="font-black uppercase">{styleOption.label}</div>
+                        <div className="text-xs font-mono uppercase">{styleOption.description}</div>
                       </div>
                     </SelectItem>
                   ))}
@@ -391,17 +375,17 @@ export default function TextHumanizer() {
 
             {/* Length Control */}
             <div>
-              <Label className="text-white text-sm font-medium">Length</Label>
+              <Label className="font-black uppercase text-sm">Length</Label>
               <Select value={length} onValueChange={(value: any) => setLength(value)}>
-                <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white hover:border-purple-500 transition-colors">
+                <SelectTrigger className="mt-2 bg-background border-4 border-black hover:shadow-brutal transition-all">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700">
+                <SelectContent className="bg-background border-4 border-black">
                   {LENGTH_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className="text-white hover:bg-gray-700">
+                    <SelectItem key={option.value} value={option.value} className="hover:bg-accent">
                       <div>
-                        <div className="font-medium">{option.label}</div>
-                        <div className="text-xs text-gray-400">{option.description}</div>
+                        <div className="font-black uppercase">{option.label}</div>
+                        <div className="text-xs font-mono uppercase">{option.description}</div>
                       </div>
                     </SelectItem>
                   ))}
@@ -412,7 +396,7 @@ export default function TextHumanizer() {
             {/* Additional Options */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-white text-sm font-medium">Preserve Terms</Label>
+                <Label className="font-black uppercase text-sm">Preserve Terms</Label>
                 <Switch
                   checked={preserveTerms}
                   onCheckedChange={setPreserveTerms}
@@ -420,10 +404,10 @@ export default function TextHumanizer() {
               </div>
               <input
                 type="text"
-                placeholder="Target audience (optional)"
+                placeholder="TARGET AUDIENCE (OPTIONAL)"
                 value={targetAudience}
                 onChange={(e) => setTargetAudience(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder:text-gray-400 focus:border-purple-500 focus:outline-none transition-colors text-sm"
+                className="w-full h-10 px-3 py-2 bg-background border-4 border-black font-mono uppercase placeholder:opacity-50 focus:shadow-brutal focus:outline-none transition-all text-sm"
               />
             </div>
 
@@ -438,33 +422,31 @@ export default function TextHumanizer() {
                   Stop
                 </Button>
               ) : (
-                <Button
+                <button
                   onClick={humanizeTextStream}
                   disabled={!inputText.trim() || characterCount > 5000}
-                  className="flex-1 bg-purple-600 hover:bg-purple-500 text-white transition-colors"
-                  size="lg"
+                  className="brutal-button bg-accent text-accent-foreground w-full h-10 flex items-center justify-center"
                 >
-                  <ArrowRight className="w-4 h-4 mr-2" />
-                  Humanize
-                </Button>
+                  HUMANIZE
+                </button>
               )}
             </div>
           </div>
 
           {/* Key Improvements */}
           {result?.changes_made && result.changes_made.length > 0 && outputText && (
-            <Card className="bg-gray-900/50 border-purple-500/20 mt-6">
+            <Card className="slide-card border-8 border-black bg-background shadow-brutal mt-6">
               <CardHeader>
-                <CardTitle className="text-white text-lg">Key Improvements</CardTitle>
+                <CardTitle className="font-black uppercase tracking-tighter text-xl">KEY IMPROVEMENTS</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {result.changes_made.slice(0, 4).map((change: string, index: number) => (
                     <div key={index} className="flex items-start gap-2 text-sm">
-                      <div className="w-5 h-5 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-white text-xs">✓</span>
+                      <div className="w-5 h-5 color-accent-blue border-2 border-black flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-black text-xs font-black">✓</span>
                       </div>
-                      <span className="text-gray-300">{change}</span>
+                      <span className="font-mono uppercase">{change}</span>
                     </div>
                   ))}
                 </div>

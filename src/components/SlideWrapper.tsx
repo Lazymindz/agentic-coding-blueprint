@@ -38,7 +38,7 @@ export default function SlideWrapper() {
   const SlideComponent = slideComponents[slideNumber as keyof typeof slideComponents];
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-purple-950">
+    <div className="min-h-screen bg-background">
       <Header />
       <SlideComponent />
       <Footer />

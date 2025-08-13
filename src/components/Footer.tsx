@@ -43,14 +43,14 @@ export const Footer = () => {
   return (
     <footer className="border-t border-border/40 bg-card/50">
       <div className="container py-12">
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2">
           {/* Platform Overview */}
           <div>
             <h3 className="font-semibold text-lg mb-4 gradient-text">
-              AI Development Platform
+              AI Era Resource Hub
             </h3>
             <p className="text-muted-foreground mb-4">
-              Your complete platform for mastering AI-powered development. From learning fundamentals to using production-ready tools.
+              Your complete resource for thriving in the AI era. From learning fundamentals to practical daily tools for professionals.
             </p>
             <div className="space-y-2">
               <Link to="/" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
@@ -60,14 +60,22 @@ export const Footer = () => {
                 Learning Blueprint
               </Link>
               <Link to="/tools" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                AI Tools
+                Daily AI Tools
               </Link>
+              <a 
+                href="https://github.com/Lazymindz/agentic-coding-blueprint" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                GitHub Repository
+              </a>
             </div>
           </div>
 
-          {/* Blueprint Resources */}
+          {/* Learning Resources */}
           <div>
-            <h4 className="font-semibold mb-4">Blueprint Resources</h4>
+            <h4 className="font-semibold mb-4">Learning Resources</h4>
             <div className="space-y-3">
               {references.slice(0, 4).map((ref, index) => (
                 <a
@@ -84,53 +92,16 @@ export const Footer = () => {
                 </a>
               ))}
               <Link to="/blueprint" className="text-sm text-primary hover:underline">
-                View all resources →
+                View complete blueprint →
               </Link>
             </div>
-          </div>
-
-          {/* Tools & Community */}
-          <div>
-            <h4 className="font-semibold mb-4">Tools & Community</h4>
-            <div className="space-y-2">
-              <Link to="/tools" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                AI-Powered Tools
-              </Link>
-              <Link to="/api-test" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                API Testing
-              </Link>
-              <a 
-                href="https://github.com/Lazymindz/agentic-coding-blueprint" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="block text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                GitHub Repository
-              </a>
-            </div>
-            <p className="text-xs text-muted-foreground mt-4">
-              Built with ❤️ for the developer community
-            </p>
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-border/40">
-          <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-            <p className="text-sm text-muted-foreground">
-              © 2025 Agentic Coding Guide. Open source and community driven.
-            </p>
-            <div className="flex items-center space-x-4 text-sm">
-              <a href="#" className="text-muted-foreground hover:text-primary animated-link">
-                Terms
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary animated-link">
-                Privacy
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary animated-link">
-                License
-              </a>
-            </div>
-          </div>
+        <div className="mt-8 pt-8 border-t border-border/40 text-center">
+          <p className="text-sm text-muted-foreground">
+            © 2025 AIProof.ME - Helping professionals thrive in the AI era
+          </p>
         </div>
       </div>
     </footer>
