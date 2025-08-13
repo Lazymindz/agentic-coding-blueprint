@@ -18,9 +18,13 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+.dev.vars
 
 # BAML generated files
 baml_client/
+
+# Wrangler generated files
+.wrangler/
 
 # Editor directories and files
 .vscode/*

@@ -40,9 +40,14 @@ const FULL_EXAMPLE_TEXTS = [
 ];
 
 export default function TextHumanizer() {
+  console.log('🎯 TextHumanizer component loaded!');
+  
   const [inputText, setInputText] = useState('');
   const [outputText, setOutputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Debug log
+  console.log('Input text:', inputText, 'Output text:', outputText);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
@@ -92,19 +97,19 @@ export default function TextHumanizer() {
   };
 
   const humanizeTextStream = async () => {
+    console.log('🚀 HUMANIZE FUNCTION CALLED!', { inputText: inputText.substring(0, 50) });
+    
     if (!inputText.trim()) {
       setError('Please enter some text to humanize');
       return;
     }
 
+    console.log('✅ Validation passed, starting streaming...');
     setIsLoading(true);
     setIsStreaming(true);
     setError(null);
     setResult(null);
     setOutputText('');
-
-    // Create abort controller for stopping stream
-    abortControllerRef.current = new AbortController();
 
     try {
       const response = await fetch('/api/humanize/stream', {
@@ -119,43 +124,68 @@ export default function TextHumanizer() {
           preserve_technical_terms: preserveTerms,
           target_audience: targetAudience || undefined,
         }),
-        signal: abortControllerRef.current.signal,
       });
 
       if (!response.ok) {
         throw new Error('Failed to start streaming');
       }
 
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (!reader) {
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      if (!response.body) {
         throw new Error('No response stream available');
       }
 
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
       let accumulatedText = '';
       let currentResult: any = null;
+      let chunkCount = 0;
+
+      console.log('🔄 Starting to read stream...');
 
       while (true) {
+        console.log('⏳ Reading next chunk...');
         const { done, value } = await reader.read();
         
         if (done) {
+          console.log('✅ Stream done, total chunks:', chunkCount);
           break;
         }
 
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
+        chunkCount++;
+        const chunk = decoder.decode(value, { stream: true });
+        console.log(`📦 Chunk ${chunkCount} (${chunk.length} bytes):`, chunk.substring(0, 100));
+        buffer += chunk;
+        
+        // Process complete lines
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
 
+        // Collect all updates for animation
+        const updates: Array<{ text: string, delay: number }> = [];
+        let updateCount = 0;
+        
         for (const line of lines) {
+          console.log('Processing line:', line);
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6));
+              console.log('Parsed streaming data:', data);
               
-              if (data.success && data.partial && data.data) {
-                // Update streaming text
+              if (data.started) {
+                console.log('Stream started:', data.message);
+              } else if (data.success && data.partial && data.data) {
+                // Collect text updates for animation
                 if (data.data.humanized_text) {
+                  updateCount++;
+                  updates.push({
+                    text: data.data.humanized_text,
+                    delay: updateCount * 150 // 150ms between updates for visible animation
+                  });
                   accumulatedText = data.data.humanized_text;
-                  setOutputText(accumulatedText);
+                  console.log('Queued update:', accumulatedText);
                 }
                 
                 // Store the most complete result so far
@@ -164,43 +194,53 @@ export default function TextHumanizer() {
                   setResult(currentResult);
                 }
               } else if (data.completed) {
-                // Streaming completed
-                break;
+                console.log('Streaming completed');
+                
+                // If we have updates, animate them
+                if (updates.length > 0) {
+                  updates.forEach(({ text, delay }) => {
+                    setTimeout(() => {
+                      setOutputText(text);
+                    }, delay);
+                  });
+                  
+                  // Set loading false after all animations complete
+                  setTimeout(() => {
+                    setIsLoading(false);
+                    setIsStreaming(false);
+                    if (accumulatedText) {
+                      toast({
+                        title: "Success!",
+                        description: "Text humanized successfully",
+                      });
+                    }
+                  }, (updateCount + 1) * 150);
+                } else {
+                  setIsLoading(false);
+                  setIsStreaming(false);
+                }
+                
+                return;
               } else if (!data.success) {
                 throw new Error(data.message || 'Streaming failed');
               }
             } catch (parseError) {
-              console.warn('Failed to parse streaming data:', parseError);
+              console.warn('Failed to parse streaming data:', parseError, 'Line:', line);
             }
           }
         }
       }
 
-      if (accumulatedText) {
-        toast({
-          title: "Success!",
-          description: "Text humanized successfully",
-        });
-      }
     } catch (error: any) {
-      if (error.name === 'AbortError') {
-        toast({
-          title: "Stopped",
-          description: "Streaming was stopped",
-        });
-      } else {
-        console.error('Streaming error:', error);
-        setError(error.message || 'An unexpected error occurred');
-        toast({
-          title: "Error",
-          description: "Failed to humanize text. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } finally {
+      console.error('Streaming error:', error);
+      setError(error.message || 'An unexpected error occurred');
+      toast({
+        title: "Error",
+        description: "Failed to humanize text. Please try again.",
+        variant: "destructive",
+      });
       setIsLoading(false);
       setIsStreaming(false);
-      abortControllerRef.current = null;
     }
   };
 
@@ -249,7 +289,7 @@ export default function TextHumanizer() {
                     placeholder="Paste your AI-generated or robotic text here..."
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    className="min-h-[300px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 focus:border-purple-500 transition-colors resize-none"
+                    className="min-h-[300px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500 transition-colors resize-none"
                   />
                   <div className="flex justify-between items-center mt-2 text-sm font-mono">
                     <span>{characterCount} characters • ~{estimatedTokens} tokens</span>
@@ -313,10 +353,10 @@ export default function TextHumanizer() {
 
                 <div className="relative">
                   <Textarea
-                    value={outputText}
+                    placeholder="Your humanized text will appear here..."
+                    {...(outputText ? { value: outputText } : { defaultValue: "" })}
+                    className="min-h-[300px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500 transition-colors resize-none"
                     readOnly
-                    placeholder={isLoading ? "" : "Humanized text will appear here"}
-                    className={`min-h-[300px] bg-gray-800 border-gray-700 text-white resize-none focus:border-purple-500 ${isLoading ? 'animate-pulse' : ''}`}
                   />
                   {outputText && (
                     <button
@@ -423,7 +463,10 @@ export default function TextHumanizer() {
                 </Button>
               ) : (
                 <button
-                  onClick={humanizeTextStream}
+                  onClick={() => {
+                    console.log('🔥 BUTTON CLICKED!');
+                    humanizeTextStream();
+                  }}
                   disabled={!inputText.trim() || characterCount > 5000}
                   className="brutal-button bg-accent text-accent-foreground w-full h-10 flex items-center justify-center"
                 >

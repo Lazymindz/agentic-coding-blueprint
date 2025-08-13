@@ -1,8 +1,9 @@
 import { Hono } from 'hono'
-import { BAMLService } from '../services/baml.service'
+import { WorkersAIService } from '../services/workers-ai.service'
 import { z } from 'zod'
+import type { Env } from '../../worker'
 
-const humanize = new Hono()
+const humanize = new Hono<{ Bindings: Env }>()
 
 // POST /humanize - Full humanization with all options
 humanize.post('/', async (c) => {
@@ -10,10 +11,10 @@ humanize.post('/', async (c) => {
     const body = await c.req.json()
     
     // Validate request using Zod
-    const validatedRequest = BAMLService.validateHumanizeRequest(body)
+    const validatedRequest = WorkersAIService.validateHumanizeRequest(body)
     
-    // Call BAML service
-    const result = await BAMLService.humanizeText(validatedRequest)
+    // Call Workers AI service
+    const result = await WorkersAIService.humanizeText(validatedRequest, c.env)
     
     return c.json({
       success: true,
@@ -45,10 +46,10 @@ humanize.post('/quick', async (c) => {
     const body = await c.req.json()
     
     // Validate request using Zod
-    const validatedRequest = BAMLService.validateQuickHumanizeRequest(body)
+    const validatedRequest = WorkersAIService.validateQuickHumanizeRequest(body)
     
-    // Call BAML service
-    const result = await BAMLService.quickHumanize(validatedRequest)
+    // Call Workers AI service
+    const result = await WorkersAIService.quickHumanize(validatedRequest, c.env)
     
     return c.json({
       success: true,
@@ -82,18 +83,34 @@ humanize.post('/quick', async (c) => {
 humanize.post('/stream', async (c) => {
   try {
     const body = await c.req.json()
-    const validatedRequest = BAMLService.validateHumanizeRequest(body)
+    const validatedRequest = WorkersAIService.validateHumanizeRequest(body)
     
     // Set headers for Server-Sent Events
-    c.header('Content-Type', 'text/plain; charset=utf-8')
+    c.header('Content-Type', 'text/event-stream')
     c.header('Cache-Control', 'no-cache')
     c.header('Connection', 'keep-alive')
     c.header('Access-Control-Allow-Origin', '*')
+    c.header('Access-Control-Allow-Headers', 'Content-Type')
+    c.header('Access-Control-Allow-Methods', 'POST, OPTIONS')
     
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const partial of BAMLService.humanizeTextStream(validatedRequest)) {
+          console.log('Starting stream for:', validatedRequest.text.substring(0, 50))
+          
+          // Send initial start marker
+          const startData = JSON.stringify({ 
+            success: true, 
+            started: true,
+            message: 'Starting humanization...'
+          })
+          controller.enqueue(new TextEncoder().encode(`data: ${startData}\n\n`))
+          
+          let chunkCount = 0
+          for await (const partial of WorkersAIService.humanizeTextStream(validatedRequest, c.env)) {
+            chunkCount++
+            console.log(`Sending chunk ${chunkCount}:`, partial.humanized_text?.substring(0, 50))
+            
             const data = JSON.stringify({ 
               success: true, 
               data: partial, 
@@ -101,6 +118,8 @@ humanize.post('/stream', async (c) => {
             })
             controller.enqueue(new TextEncoder().encode(`data: ${data}\n\n`))
           }
+          
+          console.log(`Stream completed with ${chunkCount} chunks`)
           
           // Send final completion marker
           const finalData = JSON.stringify({ 

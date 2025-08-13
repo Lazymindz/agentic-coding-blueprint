@@ -1,13 +1,14 @@
 import { Hono } from 'hono'
+import type { Env } from '../../worker'
 
-const health = new Hono()
+const health = new Hono<{ Bindings: Env }>()
 
 // Basic health check
 health.get('/', (c) => {
   return c.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
+    uptime: 'N/A (Workers runtime)',
     service: 'Agentic Coding Blueprint API',
     version: '1.0.0',
   })
@@ -22,12 +23,15 @@ health.get('/detailed', async (c) => {
     external_services: 'not_applicable',
   }
 
-  // Test BAML client import
-  try {
-    const { b } = await import('../../../baml_client/baml_client')
-    checks.baml_client = b ? 'healthy' : 'unhealthy'
-  } catch (error) {
-    checks.baml_client = 'unhealthy'
+  // Test environment variables for AI APIs
+  const hasOpenAI = !!c.env.OPENAI_API_KEY
+  const hasAnthropic = !!c.env.ANTHROPIC_API_KEY
+  const hasGemini = !!c.env.GOOGLE_API_KEY
+  
+  if (hasOpenAI || hasAnthropic || hasGemini) {
+    checks.baml_client = 'healthy'
+  } else {
+    checks.baml_client = 'unhealthy - no API keys configured'
   }
 
   const allHealthy = Object.values(checks).every(status => 
@@ -37,7 +41,12 @@ health.get('/detailed', async (c) => {
   return c.json({
     status: allHealthy ? 'healthy' : 'degraded',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
+    uptime: 'N/A (Workers runtime)',
+    providers: {
+      openai: hasOpenAI ? 'configured' : 'missing',
+      anthropic: hasAnthropic ? 'configured' : 'missing',
+      gemini: hasGemini ? 'configured' : 'missing',
+    },
     checks,
     service: 'Agentic Coding Blueprint API',
     version: '1.0.0',
