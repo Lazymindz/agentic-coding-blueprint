@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import ApiTest from "./pages/ApiTest";
 import { Slide01 } from "./pages/slides/Slide01";
 import { Slide02 } from "./pages/slides/Slide02";
 import Slide03 from "./pages/slides/Slide03";
@@ -44,6 +45,7 @@ const App = () => (
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/api-test" element={<ApiTest />} />
           <Route path="/slide/1" element={<Slide01 />} />
           <Route path="/slide/2" element={<Slide02 />} />
           <Route path="/slide/3" element={<Slide03 />} />
