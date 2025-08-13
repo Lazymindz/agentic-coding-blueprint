@@ -163,8 +163,7 @@ export default function TextHumanizer() {
         const lines = buffer.split('\n');
         buffer = lines.pop() || ''; // Keep incomplete line in buffer
 
-        // Collect all updates for animation
-        const updates: Array<{ text: string, delay: number }> = [];
+        // Track streaming updates
         let updateCount = 0;
         
         for (const line of lines) {
@@ -177,15 +176,12 @@ export default function TextHumanizer() {
               if (data.started) {
                 console.log('Stream started:', data.message);
               } else if (data.success && data.partial && data.data) {
-                // Collect text updates for animation
+                // Update text immediately as it streams
                 if (data.data.humanized_text) {
                   updateCount++;
-                  updates.push({
-                    text: data.data.humanized_text,
-                    delay: updateCount * 150 // 150ms between updates for visible animation
-                  });
                   accumulatedText = data.data.humanized_text;
-                  console.log('Queued update:', accumulatedText);
+                  setOutputText(accumulatedText); // Direct update, no animation delays
+                  console.log('Updated output text:', accumulatedText);
                 }
                 
                 // Store the most complete result so far
@@ -196,28 +192,19 @@ export default function TextHumanizer() {
               } else if (data.completed) {
                 console.log('Streaming completed');
                 
-                // If we have updates, animate them
-                if (updates.length > 0) {
-                  updates.forEach(({ text, delay }) => {
-                    setTimeout(() => {
-                      setOutputText(text);
-                    }, delay);
+                // Ensure final text is set
+                if (accumulatedText) {
+                  setOutputText(accumulatedText);
+                }
+                
+                setIsLoading(false);
+                setIsStreaming(false);
+                
+                if (accumulatedText) {
+                  toast({
+                    title: "Success!",
+                    description: "Text humanized successfully",
                   });
-                  
-                  // Set loading false after all animations complete
-                  setTimeout(() => {
-                    setIsLoading(false);
-                    setIsStreaming(false);
-                    if (accumulatedText) {
-                      toast({
-                        title: "Success!",
-                        description: "Text humanized successfully",
-                      });
-                    }
-                  }, (updateCount + 1) * 150);
-                } else {
-                  setIsLoading(false);
-                  setIsStreaming(false);
                 }
                 
                 return;
@@ -353,6 +340,7 @@ export default function TextHumanizer() {
 
                 <div className="relative">
                   <Textarea
+                    key={`output-${outputText.length}`}
                     placeholder="Your humanized text will appear here..."
                     value={outputText}
                     className="min-h-[300px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-purple-500 transition-colors resize-none"
