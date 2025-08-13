@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -231,8 +232,30 @@ export default function TextHumanizer() {
     }
   };
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Text Humanizer",
+    "description": "Transform AI-generated text into natural, human-like content with advanced humanization techniques",
+    "url": "https://aiproof.me/tools/text-humanizer",
+    "applicationCategory": "AI Tool",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="AI Text Humanizer - Make AI Content Sound Human | AIProof.ME"
+        description="Transform AI-generated text into natural, human-like content. Free tool with multiple writing styles and advanced humanization techniques."
+        keywords="AI text humanizer, humanize AI text, AI content detector, natural writing, AI to human converter, content humanization"
+        canonical="https://aiproof.me/tools/text-humanizer"
+        ogType="website"
+        structuredData={structuredData}
+      />
       <Header />
       
       {/* Bauhaus geometric elements */}
