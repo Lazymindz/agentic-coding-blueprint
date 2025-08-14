@@ -78,7 +78,6 @@ ${request.target_audience ? `- Target audience: ${request.target_audience}` : ''
 - Use "more than" or "less than"/"fewer than" instead of "over" or "under" for quantities
 - Use terms like "earlier," "later," or "previously" instead of "above" or "below"
 - Avoid slashes (e.g., and/or) - use hyphens or rephrase if necessary
-- Avoid emojis within the text
 
 ### Voice
 - Use active voice whenever possible

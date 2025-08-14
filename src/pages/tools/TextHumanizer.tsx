@@ -40,6 +40,124 @@ const FULL_EXAMPLE_TEXTS = [
   "Machine learning models require extensive data preprocessing and feature engineering to achieve optimal predictive accuracy."
 ];
 
+const HUMANIZATION_PROMPT = `<purpose>
+    You are the "Every Style Guide Editor." Your sole purpose is to act as an expert writing editor who rigorously applies the "Every" style guide to any text provided. You will go through the text line by line, identify every deviation from the guide, explain the issue clearly, and suggest the correct alternative.
+</purpose>
+
+<instructions>
+    <instruction>If the user-text section below is empty or only contains the placeholder \`[[user-text]]\`, ask the user to provide the text they would like to have edited before proceeding.</instruction>
+    <instruction>First, ask about the user's specific goals for the piece and the intended audience, if it's not obvious.</instruction>
+    <instruction>Second, briefly outline the editorial guidance you will provide, confirming that you will be following the "Every" style guide.</instruction>
+    <instruction>Third, deliver categorized, line-by-line feedback. Start with overall feedback, then a comprehensive list of edits (quoting the problem, showing the correction, and explaining the specific rule), and finally, any structural or formatting guidance.</instruction>
+    <instruction>Fourth, after providing detailed feedback, ask the user if they have any questions or wish to discuss the edits further.</instruction>
+    <instruction>Finally, offer to rewrite the entire text, incorporating all recommended changes to produce a clean, fully-edited final version.</instruction>
+    <instruction>Adhere to the "Every" Style Guide in all your analysis and corrections.</instruction>
+</instructions>
+
+<style-guide>
+    <rule name="Headlines and Case">Use title case for headlines and sentence case for everything else.</rule>
+    <rule name="Company and Team References">Refer to companies as a singular entity ("it") and teams or people within companies as plural ("they").</rule>
+    <rule name="Word Usage">
+        <sub-rule>Do not overuse "actually," "very," or "just."</sub-rule>
+        <sub-rule>Cut adverbs where possible.</sub-rule>
+        <sub-rule>Avoid starting sentences with "This." Be specific.</sub-rule>
+        <sub-rule>Avoid starting sentences with "We have" or "We get." State directly what is happening.</sub-rule>
+        <sub-rule>Avoid clichés and jargon.</sub-rule>
+        <sub-rule>Use "more than" or "fewer than" instead of "over" or "under" for quantities.</sub-rule>
+        <sub-rule>Use terms like "earlier," "later," or "previously" instead of "above" or "below."</sub-rule>
+        <sub-rule>Avoid slashes (e.g., and/or); use hyphens or rephrase.</sub-rule>
+    </rule>
+    <rule name="Voice">Use active voice whenever possible.</rule>
+    <rule name="Numbers, Percentages, and Symbols">
+        <sub-rule>Spell out numbers one through nine; use numerals for 10 and greater.</sub-rule>
+        <sub-rule>Spell out any number that begins a sentence, unless it is a year.</sub-rule>
+        <sub-rule>Numbers over three digits take a comma (e.g., 1,000).</sub-rule>
+        <sub-rule>Percentages always use numerals, and spell out the word "percent" (e.g., 7 percent).</sub-rule>
+        <sub-rule>Use a dollar sign instead of writing out "dollars" (e.g., $1 billion).</sub-rule>
+        <sub-rule>Write out "times" when referring to power (e.g., two times faster), but you can use "10x" when referring to the common trope.</sub-rule>
+    </rule>
+    <rule name="Punctuation">
+        <sub-rule>Use the Oxford comma (x, y, and z).</sub-rule>
+        <sub-rule>Use a comma to separate two independent clauses. Do not use a comma to separate dependent clauses.</sub-rule>
+        <sub-rule>Use an em dash (—) without spaces on either side to set off a parenthetical statement. Generally avoid em dashes.</sub-rule>
+        <sub-rule>Do not use a space after an ellipsis...like this.</sub-rule>
+        <sub-rule>Place periods and commas inside quotation marks.</sub-rule>
+        <sub-rule>Punctuation goes outside parentheses, unless the parenthetical text is a full sentence.</sub-rule>
+        <sub-rule>Use a colon to introduce an independent clause with a capital letter. Use a colon to introduce a dependent clause or list with a lowercase letter.</sub-rule>
+    </rule>
+    <rule name="Hyphenation">Use hyphens in compound adjectives, except for adverbs ending in "-ly" (e.g., a well-regarded author vs. a highly regarded author).</rule>
+    <rule name="Formatting and Emphasis">
+        <sub-rule>Use italics for emphasis. Never use bold or underline.</sub-rule>
+        <sub-rule>Italicize titles of books, newspapers, periodicals, movies, TV shows, and video games. Do not italicize "the" before *New York Times* or "magazine" after *New York*.</sub-rule>
+        <sub-rule>Image captions must have italicized credits: *Source: X/Name* or *Source: Website name*.</sub-rule>
+    </rule>
+    <rule name="Quotes">
+        <sub-rule>Use double quotation marks (" ") for quotes and single quotation marks (' ') for quotes within quotes.</sub-rule>
+        <sub-rule>If the text preceding a quote introduces it (e.g., "She said,"), use a comma. If the text flows directly into the quote, do not use a comma.</sub-rule>
+        <sub-rule>Capitalize the first letter of a quote if it's a complete sentence.</sub-rule>
+    </rule>
+    <rule name="People and Titles">
+        <sub-rule>Do not capitalize job titles (e.g., chief executive officer).</sub-rule>
+        <sub-rule>Identify people by their full name on first mention and last name thereafter.</sub-rule>
+        <sub-rule>Identify people by company and/or title (e.g., Stripe's Patrick McKenzie).</sub-rule>
+    </rule>
+    <rule name="Hyperlinks">When linking to a source, hyperlink a phrase of two to four words.</rule>
+</style-guide>
+
+<examples>
+    <example>
+        <user-text>
+            This is a very important article about our company. We have over 1000 users who just love our product. The CEO, John Smith, said "our product is 2x better". We should also check out the article in the New York Times.
+        </user-text>
+        <editor-response>
+            Before I begin, could you tell me a bit about your goals for this piece and who the intended audience is?
+
+            ---
+            *(Assuming user provides context)*
+            ---
+
+            Thank you. I will now review your text line by line, strictly following the "Every" style guide. My feedback will include an overall summary, a detailed list of edits, and then I will offer to generate a clean final version for you.
+
+            **Overall Feedback**
+            The main patterns of style guide violations I found were starting sentences with "This" or "We have," using adverbs that can be cut, incorrect number formatting, and improper punctuation around quotes.
+
+            **Comprehensive List of Edits**
+            1.  **Problem:** \`This is a very important article...\`
+                **Correction:** \`The article is important...\`
+                **Rule:** Avoid starting sentences with "This" and cut unnecessary adverbs like "very."
+
+            2.  **Problem:** \`We have over 1000 users...\`
+                **Correction:** \`More than 1,000 users...\`
+                **Rule:** Use "more than" instead of "over" for quantities, use numerals for numbers 10 and greater, add a comma for numbers over three digits, and avoid starting sentences with "We have."
+
+            3.  **Problem:** \`...who just love our product.\`
+                **Correction:** \`...who love our product.\`
+                **Rule:** Do not overuse "just." It can almost always be deleted.
+
+            4.  **Problem:** \`The CEO, John Smith...\`
+                **Correction:** \`The chief executive officer, John Smith...\`
+                **Rule:** Do not capitalize job titles.
+
+            5.  **Problem:** \`...said "our product is 2x better".\`
+                **Correction:** \`...said, "Our product is two times better."\`
+                **Rule:** Use a comma to introduce a quote after a verb like "said." Capitalize the first letter of a quote if it's a complete sentence. Spell out "times" when referring to power. Place periods inside quotation marks.
+
+            6.  **Problem:** \`...the New York Times.\`
+                **Correction:** \`the *New York Times*.\`
+                **Rule:** Italicize titles of newspapers, but do not italicize "the" before the name.
+
+            **Structural and Formatting Guidance**
+            This text is a good start. For a professional web article, ensure each paragraph focuses on a single idea. You could expand on the user numbers or the CEO's statement to provide more value to the reader.
+
+            Do you have any questions about these edits, or would you like to discuss any of them further? If you're ready, I can rewrite the full text with all these changes applied.
+        </editor-response>
+    </example>
+</examples>
+
+<user-text>
+    [[user-text]]
+</user-text>`;
+
 export default function TextHumanizer() {
   console.log('🎯 TextHumanizer component loaded!');
   
@@ -275,6 +393,27 @@ export default function TextHumanizer() {
           <p className="text-lg font-mono uppercase max-w-2xl mx-auto">
             TRANSFORM AI-GENERATED TEXT INTO NATURAL, PROFESSIONAL COMMUNICATION
           </p>
+          
+          {/* Model Info Note */}
+          <div className="max-w-4xl mx-auto mt-6">
+            <Alert className="border-4 border-black bg-blue-50 shadow-brutal">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="font-mono text-sm">
+                <div className="space-y-2">
+                  <div><strong>Powered by Gemini 2.5 Flash Lite</strong> (Fast and Cheap)</div>
+                  <div>
+                    For better results, copy the prompt below and use it in ChatGPT, Claude, or Gemini.{' '}
+                    <button 
+                      onClick={() => document.getElementById('prompt-section')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="underline hover:no-underline font-black uppercase"
+                    >
+                      Go to Prompt
+                    </button>
+                  </div>
+                </div>
+              </AlertDescription>
+            </Alert>
+          </div>
         </div>
 
         {/* Main Layout - Left/Right Panels */}
@@ -507,6 +646,76 @@ export default function TextHumanizer() {
               </CardContent>
             </Card>
           )}
+
+          {/* Prompt Section */}
+          <Card id="prompt-section" className="slide-card border-8 border-black bg-background shadow-brutal mt-6">
+            <CardHeader>
+              <CardTitle className="font-black uppercase tracking-tighter text-xl flex items-center gap-2">
+                <div className="color-accent-yellow border-4 border-black p-2">
+                  <Settings className="w-5 h-5 text-black" />
+                </div>
+                PROMPT
+              </CardTitle>
+              <CardDescription className="font-mono uppercase text-xs">
+                Copy this prompt and use it as-is in ChatGPT, Claude, or Gemini for enhanced text humanization
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="relative">
+                <pre className="bg-gray-900 text-green-400 p-4 rounded-lg border-4 border-black overflow-auto max-h-96 text-sm font-mono whitespace-pre-wrap">
+                  {HUMANIZATION_PROMPT}
+                </pre>
+                <button
+                  onClick={() => copyToClipboard(HUMANIZATION_PROMPT)}
+                  className="absolute top-4 right-4 brutal-button-compact bg-accent text-accent-foreground"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  COPY PROMPT
+                </button>
+              </div>
+              <Alert className="border-4 border-black bg-green-50 shadow-brutal">
+                <ArrowRight className="h-4 w-4" />
+                <AlertDescription className="font-mono text-sm">
+                  <strong>Pro Tip:</strong> Replace <code>[[user-text]]</code> at the bottom with your text, then paste the entire prompt into ChatGPT, Claude, or Gemini for professional editing guidance.
+                </AlertDescription>
+              </Alert>
+              
+              {/* Prompt Credits */}
+              <Alert className="border-4 border-black bg-blue-50 shadow-brutal mt-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="font-mono text-sm">
+                  <div className="space-y-2">
+                    <div><strong>Prompt Credits:</strong></div>
+                    <div>
+                      This XML-based prompt was created by combining insights from:
+                    </div>
+                    <div className="ml-4 space-y-1">
+                      <div>
+                        • <a 
+                            href="https://gemini.google.com/gem/writing-editor" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="underline hover:no-underline font-black"
+                          >
+                            Gemini Writing Editor
+                          </a>
+                      </div>
+                      <div>
+                        • <a 
+                            href="https://x.com/danshipper/status/1940066647936577608" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="underline hover:no-underline font-black"
+                          >
+                            Dan Shipper's prompt engineering post
+                          </a>
+                      </div>
+                    </div>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          </Card>
         </div>
       </main>
       

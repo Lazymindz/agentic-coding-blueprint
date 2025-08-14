@@ -55,16 +55,22 @@ export default {
       return api.fetch(apiRequest, env);
     }
     
-    // Serve static assets from the dist directory
-    const response = await env.ASSETS.fetch(request);
+    // Check if this is a request for a static asset
+    const isStaticAsset = url.pathname.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|xml|txt|pdf|zip|webmanifest)$/i);
     
-    // If the asset exists and is not an HTML file, return it as-is
-    if (response.status !== 404 && !url.pathname.endsWith('.html') && !url.pathname.match(/\/$/)) {
-      return response;
+    if (isStaticAsset) {
+      // Serve static assets directly
+      return await env.ASSETS.fetch(request);
     }
     
-    // For SPA routing: serve index.html for all non-asset routes
-    const indexRequest = new Request(new URL('/index.html', url), request);
+    // For all other requests (SPA routes), serve index.html directly without checking ASSETS first
+    // This prevents 307 redirects that the ASSETS binding might return for non-existent paths
+    const indexRequest = new Request(new URL('/index.html', url.origin), {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+      }
+    });
     const indexResponse = await env.ASSETS.fetch(indexRequest);
     
     // Add security headers
